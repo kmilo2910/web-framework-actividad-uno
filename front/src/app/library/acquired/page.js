@@ -7,6 +7,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '@/infrastructure/firebase/firebase.client';
 import Link from 'next/link';
 import DownloadReceipt from '@/components/DownloadReceipt';
+import BookCover from '@/components/BookCover';
 export default function AcquiredPage() {
   const [items, setItems] = useState([]);
   const [error, setError] = useState('');
@@ -50,9 +51,10 @@ export default function AcquiredPage() {
                 <table className="w-full min-w-[700px] text-left text-sm">
                   <thead className="border-b border-[#d8d5ce] bg-[#f8f7f4] text-xs uppercase tracking-wider text-[#64707d]">
                     <tr>
+                      <th className="px-5 py-4">Portada</th>
                       <th className="px-5 py-4">Publicación</th>
                       <th className="px-5 py-4">Autor</th>
-                      <th className="px-5 py-4">Fecha</th>
+                      <th className="px-5 py-4">Fecha de compra</th>
                       <th className="px-5 py-4">Precio</th>
                       <th className="px-5 py-4">Acciones</th>
                     </tr>
@@ -63,6 +65,13 @@ export default function AcquiredPage() {
                         key={item.id}
                         className="border-b border-[#eeeae2] last:border-0 hover:bg-[#faf9f6]"
                       >
+                        <td className="px-5 py-4">
+                          <BookCover
+                            book={item.book || { id: item.bookId }}
+                            className="h-20 w-14 rounded-lg bg-transparent p-0"
+                            imageClassName="max-h-full w-auto rounded-md object-contain shadow-[0_6px_12px_rgba(23,32,42,0.18)]"
+                          />
+                        </td>
                         <td className="px-5 py-5 font-semibold">
                           <Link
                             className="text-[#1f4f66] hover:underline"
