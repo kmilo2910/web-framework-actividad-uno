@@ -21,8 +21,8 @@ export default function LibraryShell({ children, user }) {
     pathname === '/library' || (pathname.startsWith('/library/') && !isAcquiredActive);
   const isCoworkingActive = pathname === '/coworking' || pathname.startsWith('/coworking/');
   const isReservationsActive = pathname === '/coworking/reservations';
-  const navLinkClass = (active) =>
-    `hidden rounded-full px-3 py-2 transition md:block ${active ? 'bg-[#e7eef0] font-semibold text-[#1f4f66]' : 'hover:bg-white'}`;
+  const navLinkClass = (active, green = false) =>
+    `hidden rounded-full px-3 py-2 transition md:block ${active ? (green ? 'bg-[#e8f3eb] font-semibold text-[#2f6f4e]' : 'bg-[#e7eef0] font-semibold text-[#1f4f66]') : 'hover:bg-white'}`;
 
   async function confirmLogout() {
     setLoggingOut(true);
@@ -42,7 +42,9 @@ export default function LibraryShell({ children, user }) {
         <header className="sticky top-0 z-40 border-b border-[#d8d5ce]/80 bg-[#f4f1eb]/90 px-6 py-3 backdrop-blur-xl md:px-10">
           <div className="mx-auto flex max-w-7xl items-center justify-between gap-6">
             <Link href={homePath} className="flex items-center gap-3 font-semibold tracking-tight">
-              <span className="grid h-10 w-10 place-items-center rounded-2xl bg-[#1f4f66] text-white shadow-sm">
+              <span
+                className={`grid h-10 w-10 place-items-center rounded-2xl text-white shadow-sm ${isCoworkingActive ? 'bg-[#2f6f4e]' : 'bg-[#1f4f66]'}`}
+              >
                 <BookOpen size={18} />
               </span>
               <span>
@@ -62,13 +64,16 @@ export default function LibraryShell({ children, user }) {
                 </Link>
               )}
               <Link
-                className={navLinkClass(isCoworkingActive && !isReservationsActive)}
+                className={navLinkClass(isCoworkingActive && !isReservationsActive, true)}
                 href="/coworking"
               >
                 Coworking
               </Link>
               {activeUser && (
-                <Link className={navLinkClass(isReservationsActive)} href="/coworking/reservations">
+                <Link
+                  className={navLinkClass(isReservationsActive, true)}
+                  href="/coworking/reservations"
+                >
                   Reservas
                 </Link>
               )}
