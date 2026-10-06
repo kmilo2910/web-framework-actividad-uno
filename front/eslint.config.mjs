@@ -17,6 +17,8 @@ export default [
         console: 'readonly',
         setTimeout: 'readonly',
         clearTimeout: 'readonly',
+        URL: 'readonly',
+        Blob: 'readonly',
       },
     },
     rules: { 'no-console': ['warn', { allow: ['warn', 'error'] }], 'no-unused-vars': 'off' },

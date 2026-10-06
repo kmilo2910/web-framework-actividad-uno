@@ -1,0 +1,48 @@
+'use client';
+import { Download, FileText } from 'lucide-react';
+import { jsPDF } from 'jspdf';
+import { formatCurrency } from '@/core/formatters/currency';
+
+export default function DownloadReceipt({ purchase, book }) {
+  const title = book?.title || purchase.bookId;
+  function productPdf() {
+    const pdf = new jsPDF();
+    pdf.setFontSize(24);
+    pdf.text('NEXUS UNIVERSIDAD', 20, 25);
+    pdf.setFontSize(20);
+    pdf.text(title, 20, 55, { maxWidth: 170 });
+    pdf.setFontSize(12);
+    pdf.text('Material digital de ejemplo', 20, 72);
+    pdf.text('Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 20, 105);
+    pdf.text('Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.', 20, 118);
+    pdf.text('Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.', 20, 131);
+    pdf.save(`nexus-${purchase.bookId}.pdf`);
+  }
+  function receiptPdf() {
+    const pdf = new jsPDF();
+    pdf.setFontSize(22);
+    pdf.text('NEXUS · COMPROBANTE', 20, 25);
+    pdf.setFontSize(12);
+    pdf.text(`Producto: ${title}`, 20, 60);
+    pdf.text(`Precio: ${formatCurrency(purchase.price)}`, 20, 72);
+    pdf.text(`Fecha: ${new Date(purchase.purchasedAt).toLocaleString('es-CO')}`, 20, 84);
+    pdf.text(`Referencia: ${purchase.id}`, 20, 96);
+    pdf.save(`nexus-${purchase.bookId}-comprobante.pdf`);
+  }
+  return (
+    <div className="flex flex-col items-start gap-2">
+      <button
+        onClick={productPdf}
+        className="inline-flex items-center gap-2 text-sm font-semibold text-[#1f4f66] hover:underline"
+      >
+        <FileText size={16} /> Descargar PDF
+      </button>
+      <button
+        onClick={receiptPdf}
+        className="inline-flex items-center gap-2 text-sm font-semibold text-[#64707d] hover:underline"
+      >
+        <Download size={16} /> Comprobante
+      </button>
+    </div>
+  );
+}

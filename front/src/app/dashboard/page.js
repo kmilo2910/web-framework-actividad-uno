@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { ArrowUpRight, BookOpen, Coffee, Library, UsersRound } from 'lucide-react';
 import LibraryShell from '@/components/LibraryShell';
+import PersonalStats from '@/components/PersonalStats';
 
 export default function DashboardPage() {
   return (
@@ -30,6 +31,9 @@ export default function DashboardPage() {
             <p className="mt-2 max-w-sm text-[#dbe8ea]">
               Explora libros y revistas del catálogo universitario.
             </p>
+            <span className="mt-7 inline-flex items-center rounded-full bg-white px-4 py-2 text-sm font-semibold text-[#1f4f66]">
+              Ingresar a biblioteca
+            </span>
           </Link>
           <Link
             href="/coworking"
@@ -43,14 +47,13 @@ export default function DashboardPage() {
             <p className="mt-2 max-w-sm text-[#64707d]">
               Consulta espacios disponibles y gestiona tus reservas.
             </p>
+            <span className="mt-7 inline-flex items-center rounded-full bg-[#1f4f66] px-4 py-2 text-sm font-semibold text-white">
+              Ingresar a coworking
+            </span>
           </Link>
         </div>
         <div className="mt-10 grid gap-5 sm:grid-cols-2">
-          <div className="rounded-2xl border border-[#d8d5ce] bg-white p-6">
-            <Library className="text-[#1f4f66]" />
-            <p className="mt-8 text-sm text-[#64707d]">Tu biblioteca</p>
-            <p className="mt-1 text-xl font-semibold">0 adquisiciones</p>
-          </div>
+          <PersonalStats />
           <div className="rounded-2xl border border-[#d8d5ce] bg-white p-6">
             <UsersRound className="text-[#1f4f66]" />
             <p className="mt-8 text-sm text-[#64707d]">Tus reservas</p>

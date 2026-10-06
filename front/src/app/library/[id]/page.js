@@ -1,7 +1,8 @@
 import Link from 'next/link';
-import { ArrowLeft, ShoppingBag } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import LibraryShell from '@/components/LibraryShell';
 import { formatCurrency } from '@/core/formatters/currency';
+import PurchaseButton from '@/components/PurchaseButton';
 export const revalidate = 600;
 async function getBook(id) {
   const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/books/${id}`, {
@@ -44,9 +45,7 @@ export default async function BookDetailPage({ params }) {
               {book.author} · {book.year}
             </p>
             <p className="mt-8 text-3xl font-semibold">{formatCurrency(book.price)}</p>
-            <button className="mt-8 flex items-center gap-2 rounded-full bg-[#1f4f66] px-6 py-3 font-semibold text-white">
-              <ShoppingBag size={18} /> Comprar
-            </button>
+            <PurchaseButton bookId={book.id} />
           </div>
         </div>
       </div>

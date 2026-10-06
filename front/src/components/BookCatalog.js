@@ -5,14 +5,20 @@ import BookCard from '@/components/BookCard';
 export default function BookCatalog({ books }) {
   const [query, setQuery] = useState('');
   const [type, setType] = useState('');
+  const [category, setCategory] = useState('');
+  const [year, setYear] = useState('');
+  const categories = [...new Set(books.map((book) => book.category))];
+  const years = [...new Set(books.map((book) => book.year))].sort((a, b) => b - a);
   const visible = useMemo(
     () =>
       books.filter(
         (book) =>
           `${book.title} ${book.author}`.toLowerCase().includes(query.toLowerCase()) &&
-          (!type || book.type === type)
+          (!type || book.type === type) &&
+          (!category || book.category === category) &&
+          (!year || String(book.year) === year)
       ),
-    [books, query, type]
+    [books, query, type, category, year]
   );
   return (
     <>
@@ -38,6 +44,30 @@ export default function BookCatalog({ books }) {
             <option value="magazine">Revistas</option>
           </select>
         </label>
+        <select
+          className="rounded-xl border border-[#d8d5ce] bg-white px-4 py-3 text-sm outline-none"
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+        >
+          <option value="">Categorías</option>
+          {categories.map((item) => (
+            <option key={item} value={item}>
+              {item}
+            </option>
+          ))}
+        </select>
+        <select
+          className="rounded-xl border border-[#d8d5ce] bg-white px-4 py-3 text-sm outline-none"
+          value={year}
+          onChange={(e) => setYear(e.target.value)}
+        >
+          <option value="">Año</option>
+          {years.map((item) => (
+            <option key={item} value={item}>
+              {item}
+            </option>
+          ))}
+        </select>
       </div>
       <div className="grid gap-5 py-10 sm:grid-cols-2 lg:grid-cols-3">
         {visible.map((book) => (

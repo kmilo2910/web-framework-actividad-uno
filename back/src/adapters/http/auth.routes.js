@@ -1,20 +1,9 @@
 import { Router } from 'express';
+import { makeAuthMiddleware } from './auth.middleware.js';
 
 export function authRoutes({ authService, firebaseAuth, frontendUrl }) {
   const router = Router();
-  const requireAuth = async (req, res, next) => {
-    try {
-      if (!firebaseAuth)
-        return res.status(503).json({ error: 'Firebase Admin no está configurado en el backend' });
-      const header = req.headers.authorization || '';
-      if (!header.startsWith('Bearer '))
-        return res.status(401).json({ error: 'Token de autenticación requerido' });
-      req.firebaseUser = await firebaseAuth.verifyToken(header.slice(7));
-      next();
-    } catch (_error) {
-      res.status(401).json({ error: 'Token inválido o expirado' });
-    }
-  };
+  const requireAuth = makeAuthMiddleware(firebaseAuth);
   router.get('/config', (_req, res) =>
     res.json({ firebaseConfigured: Boolean(firebaseAuth), frontendUrl })
   );

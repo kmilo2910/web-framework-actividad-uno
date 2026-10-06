@@ -24,7 +24,9 @@ export default function LibraryShell({ children, user }) {
             <Link className="font-medium text-[#17202a]" href="/library">
               Biblioteca
             </Link>
+            {activeUser && <Link href="/library/acquired">Adquisiciones</Link>}
             <Link href="/coworking">Coworking</Link>
+            {activeUser && <Link href="/coworking/reservations">Reservas</Link>}
             {activeUser && (
               <span className="hidden items-center gap-2 md:flex">
                 <UserRound size={16} />
