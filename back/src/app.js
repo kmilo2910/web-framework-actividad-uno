@@ -43,6 +43,7 @@ export function createApp() {
   const books = makeBookController(new BooksService(bookRepository));
   app.get('/api/health', (_req, res) => res.json({ ok: true, service: 'nexus-backend' }));
   app.get('/api/books/bestsellers/top', books.bestsellers);
+  app.get('/api/books/:id/cover', books.cover);
   app.use('/api/books', resourceRoutes(books));
   for (const [path, collection, prefix] of [
     ['users', 'users', 'user'],

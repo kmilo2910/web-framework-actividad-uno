@@ -1,8 +1,4 @@
 export function formatCurrency(value) {
-  return new Intl.NumberFormat('es-CO', {
-    style: 'currency',
-    currency: 'COP',
-    currencyDisplay: 'code',
-    maximumFractionDigits: 0,
-  }).format(Number(value) || 0);
+  const amount = Number(value) || 0;
+  return `COP ${amount.toLocaleString('es-CO', { maximumFractionDigits: 0 })}`;
 }

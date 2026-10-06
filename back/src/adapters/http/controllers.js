@@ -1,3 +1,5 @@
+import { Buffer } from 'node:buffer';
+
 export const makeCrudController = (service) => ({
   list: async (req, res, next) => {
     try {
@@ -41,6 +43,14 @@ export const makeBookController = (service) => ({
   bestsellers: async (_req, res, next) => {
     try {
       res.json(await service.bestsellers());
+    } catch (error) {
+      next(error);
+    }
+  },
+  cover: async (req, res, next) => {
+    try {
+      const { data, mimeType } = await service.getCover(req.params.id);
+      res.type(mimeType).send(Buffer.from(data, 'base64'));
     } catch (error) {
       next(error);
     }

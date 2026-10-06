@@ -13,7 +13,10 @@ export class PurchasesService {
     if (book.stock < 1) throw new ValidationError('El producto no tiene stock disponible');
     const existing = await this.purchaseRepository.findAll({ userId: user.id, bookId });
     if (existing.length) throw new ValidationError('Ya has adquirido esta publicación');
-    await this.bookRepository.update(book.id, { stock: book.stock - 1 });
+    await this.bookRepository.update(book.id, {
+      stock: book.stock - 1,
+      soldLastWeeks: (book.soldLastWeeks || 0) + 1,
+    });
     return this.purchaseRepository.create({
       userId: user.id,
       bookId,

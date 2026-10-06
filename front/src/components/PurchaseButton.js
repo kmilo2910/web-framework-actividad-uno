@@ -36,10 +36,15 @@ export default function PurchaseButton({ bookId }) {
   }
   return (
     <div>
+      {state === 'done' && (
+        <span className="mt-8 inline-flex items-center rounded-full border border-[#9bd3ad] bg-[#e8f5ed] px-3 py-1.5 text-xs font-bold uppercase tracking-[.14em] text-[#237a43]">
+          Publicación adquirida
+        </span>
+      )}
       <button
         onClick={buy}
         disabled={state === 'loading' || state === 'done'}
-        className="mt-8 flex items-center gap-2 rounded-full bg-[#1f4f66] px-6 py-3 font-semibold text-white disabled:opacity-60"
+        className="mt-4 flex items-center gap-2 rounded-full bg-[#1f4f66] px-6 py-3 font-semibold text-white disabled:opacity-60"
       >
         <ShoppingBag size={18} />
         {state === 'loading' ? 'Procesando...' : state === 'done' ? 'Adquirido' : 'Comprar'}

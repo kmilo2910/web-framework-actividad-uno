@@ -3,18 +3,26 @@
 import Link from 'next/link';
 import { BookOpen, ChevronDown, LogOut, UserRound } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth, firebaseAuthAdapter } from '@/infrastructure/firebase/firebase.client';
 import ProtectedRoute from '@/components/ProtectedRoute';
 
 export default function LibraryShell({ children, user }) {
   const router = useRouter();
+  const pathname = usePathname();
   const [activeUser, setActiveUser] = useState(user || null);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
   useEffect(() => onAuthStateChanged(auth, setActiveUser), [user]);
   const homePath = activeUser ? '/dashboard' : '/';
+  const isAcquiredActive = pathname === '/library/acquired';
+  const isLibraryActive =
+    pathname === '/library' || (pathname.startsWith('/library/') && !isAcquiredActive);
+  const isCoworkingActive = pathname === '/coworking' || pathname.startsWith('/coworking/');
+  const isReservationsActive = pathname === '/coworking/reservations';
+  const navLinkClass = (active) =>
+    `hidden rounded-full px-3 py-2 transition md:block ${active ? 'bg-[#e7eef0] font-semibold text-[#1f4f66]' : 'hover:bg-white'}`;
 
   async function confirmLogout() {
     setLoggingOut(true);
@@ -45,31 +53,22 @@ export default function LibraryShell({ children, user }) {
               </span>
             </Link>
             <nav className="flex items-center gap-2 text-sm text-[#64707d] md:gap-5">
-              <Link
-                className="hidden rounded-full px-3 py-2 font-medium text-[#17202a] transition hover:bg-white md:block"
-                href="/library"
-              >
+              <Link className={`${navLinkClass(isLibraryActive)} font-medium`} href="/library">
                 Biblioteca
               </Link>
               {activeUser && (
-                <Link
-                  className="hidden rounded-full px-3 py-2 transition hover:bg-white md:block"
-                  href="/library/acquired"
-                >
+                <Link className={navLinkClass(isAcquiredActive)} href="/library/acquired">
                   Adquisiciones
                 </Link>
               )}
               <Link
-                className="hidden rounded-full px-3 py-2 transition hover:bg-white md:block"
+                className={navLinkClass(isCoworkingActive && !isReservationsActive)}
                 href="/coworking"
               >
                 Coworking
               </Link>
               {activeUser && (
-                <Link
-                  className="hidden rounded-full px-3 py-2 transition hover:bg-white md:block"
-                  href="/coworking/reservations"
-                >
+                <Link className={navLinkClass(isReservationsActive)} href="/coworking/reservations">
                   Reservas
                 </Link>
               )}
