@@ -1,5 +1,5 @@
 import { getApp, getApps, initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
 
 const config = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -15,6 +15,7 @@ const provider = new GoogleAuthProvider();
 
 export const firebaseAuthAdapter = {
   loginWithGoogle: async () => (await signInWithPopup(auth, provider)).user,
+  logout: () => signOut(auth),
   getCurrentUser: () => auth.currentUser,
   getIdToken: () => auth.currentUser?.getIdToken() || null,
 };
