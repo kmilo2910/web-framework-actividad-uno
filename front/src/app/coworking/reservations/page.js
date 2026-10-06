@@ -6,6 +6,7 @@ import { apiClient } from '@/infrastructure/http/api.client';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '@/infrastructure/firebase/firebase.client';
 import CancelReservationButton from '@/components/CancelReservationButton';
+import { CalendarDays, Clock3, Timer } from 'lucide-react';
 export default function ReservationsPage() {
   const [items, setItems] = useState([]);
   useEffect(() => {
@@ -26,17 +27,46 @@ export default function ReservationsPage() {
             items.map((item) => (
               <article
                 key={item.id}
-                className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-[#d8d5ce] bg-white p-5"
+                className="flex flex-wrap items-center justify-between gap-5 rounded-2xl border border-[#b9d8c5]/60 bg-white/75 p-5 shadow-sm backdrop-blur-sm"
               >
-                <div>
-                  <p className="font-semibold">Espacio {item.spaceId}</p>
-                  <p className="mt-2 text-sm text-[#64707d]">
-                    {new Date(item.startsAt).toLocaleString('es-CO')} —{' '}
-                    {new Date(item.endsAt).toLocaleTimeString('es-CO')}
-                  </p>
-                  <p className="mt-1 text-xs uppercase tracking-wider text-[#64707d]">
-                    {item.status === 'active' ? 'Activa' : 'Cancelada'}
-                  </p>
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <h2 className="text-xl font-semibold text-[#17202a]">
+                      {item.spaceName || item.spaceId}
+                    </h2>
+                    <span
+                      className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                        item.status === 'active'
+                          ? 'bg-[#e8f3eb] text-[#2f6f4e]'
+                          : 'bg-[#fff1eb] text-[#a4511f]'
+                      }`}
+                    >
+                      {item.status === 'active' ? 'Activa' : 'Cancelada'}
+                    </span>
+                  </div>
+                  <div className="mt-4 flex flex-wrap gap-2 text-sm text-[#334155]">
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-[#e8f3eb] px-3 py-1.5">
+                      <CalendarDays size={14} className="text-[#2f6f4e]" />
+                      {new Date(item.startsAt).toLocaleDateString('es-CO')}
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-[#e8f3eb] px-3 py-1.5">
+                      <Clock3 size={14} className="text-[#2f6f4e]" />
+                      {new Date(item.startsAt).toLocaleTimeString('es-CO', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })}{' '}
+                      —{' '}
+                      {new Date(item.endsAt).toLocaleTimeString('es-CO', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })}
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-[#e8f3eb] px-3 py-1.5">
+                      <Timer size={14} className="text-[#2f6f4e]" />
+                      {Math.round((new Date(item.endsAt) - new Date(item.startsAt)) / 60000)}{' '}
+                      minutos
+                    </span>
+                  </div>
                 </div>
                 {item.status === 'active' && (
                   <CancelReservationButton

@@ -58,7 +58,19 @@ export class ReservationsService {
   }
   async listForUser(userEmail) {
     const user = await this.userRepository.findByEmail(userEmail);
-    return user ? this.reservationRepository.findAll({ userId: user.id }) : [];
+    if (!user) return [];
+    const reservations = await this.reservationRepository.findAll({ userId: user.id });
+    return Promise.all(
+      reservations.map(async (reservation) => {
+        const space = await this.spaceRepository.findById(reservation.spaceId);
+        return {
+          ...reservation,
+          spaceName: space?.name || reservation.spaceId,
+          capacity: space?.capacity,
+          floor: space?.floor,
+        };
+      })
+    );
   }
   async cancel({ userEmail, reservationId }) {
     const user = await this.userRepository.findByEmail(userEmail);
