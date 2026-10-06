@@ -1,23 +1,29 @@
 import { NotFoundError, ValidationError } from '../domain/errors.js';
 import { Buffer } from 'node:buffer';
+import { normalizeLanguage, withoutLanguage } from '../i18n/languages.js';
+import { localizeRecord } from '../i18n/localize.js';
+import { bookTranslations } from '../i18n/book-translations.js';
+import { bookTranslationsExtra } from '../i18n/book-translations-extra.js';
+import { categoryTranslations } from '../i18n/category-translations.js';
 export class BooksService {
   constructor(bookRepository) {
     this.bookRepository = bookRepository;
   }
   list(filters) {
+    const language = normalizeLanguage(filters?.lang);
     return this.bookRepository
-      .findAll(filters)
-      .then((books) => books.map((book) => this.toPublicBook(book)));
+      .findAll(withoutLanguage(filters))
+      .then((books) => books.map((book) => this.toPublicBook(book, language)));
   }
-  async getById(id) {
+  async getById(id, language) {
     const book = await this.bookRepository.findById(id);
     if (!book) throw new NotFoundError('Libro o revista no encontrado');
-    return this.toPublicBook(book);
+    return this.toPublicBook(book, language);
   }
-  bestsellers() {
+  bestsellers(language) {
     return this.bookRepository
       .findBestSellers(10)
-      .then((books) => books.map((book) => this.toPublicBook(book)));
+      .then((books) => books.map((book) => this.toPublicBook(book, language)));
   }
   async getCover(id) {
     const book = await this.bookRepository.findById(id);
@@ -33,8 +39,24 @@ export class BooksService {
     await this.bookRepository.update(id, { coverData: data, coverMimeType: mimeType });
     return { data, mimeType };
   }
-  toPublicBook(book) {
-    const publicBook = { ...book };
+  toPublicBook(book, language) {
+    const localizedSource = {
+      ...book,
+      translations: {
+        ...bookTranslationsExtra[book.id],
+        ...bookTranslations[book.id],
+        ...book.translations,
+      },
+    };
+    const publicBook = localizeRecord(localizedSource, language, [
+      'title',
+      'author',
+      'shortDescription',
+      'longDescription',
+      'category',
+    ]);
+    const category = categoryTranslations[book.category];
+    if (category) publicBook.category = category[language] || category.es;
     delete publicBook.coverData;
     delete publicBook.coverMimeType;
     return publicBook;

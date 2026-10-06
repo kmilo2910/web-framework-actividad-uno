@@ -10,7 +10,7 @@ export const makeCrudController = (service) => ({
   },
   get: async (req, res, next) => {
     try {
-      res.json(await service.getById(req.params.id));
+      res.json(await service.getById(req.params.id, req.query.lang));
     } catch (error) {
       next(error);
     }
@@ -42,7 +42,7 @@ export const makeBookController = (service) => ({
   ...makeCrudController(service),
   bestsellers: async (_req, res, next) => {
     try {
-      res.json(await service.bestsellers());
+      res.json(await service.bestsellers(_req.query.lang));
     } catch (error) {
       next(error);
     }

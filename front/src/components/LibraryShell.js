@@ -7,6 +7,8 @@ import { usePathname, useRouter } from 'next/navigation';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth, firebaseAuthAdapter } from '@/infrastructure/firebase/firebase.client';
 import ProtectedRoute from '@/components/ProtectedRoute';
+import LanguageSelector from '@/i18n/LanguageSelector';
+import { useI18n } from '@/i18n/provider';
 
 export default function LibraryShell({ children, user }) {
   const router = useRouter();
@@ -14,6 +16,7 @@ export default function LibraryShell({ children, user }) {
   const [activeUser, setActiveUser] = useState(user || null);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
+  const { dictionary } = useI18n();
   useEffect(() => onAuthStateChanged(auth, setActiveUser), [user]);
   const homePath = activeUser ? '/dashboard' : '/';
   const isAcquiredActive = pathname === '/library/acquired';
@@ -56,25 +59,25 @@ export default function LibraryShell({ children, user }) {
             </Link>
             <nav className="flex items-center gap-2 text-sm text-[#64707d] md:gap-5">
               <Link className={`${navLinkClass(isLibraryActive)} font-medium`} href="/library">
-                Biblioteca
+                {dictionary.dashboard.library}
               </Link>
               {activeUser && (
                 <Link className={navLinkClass(isAcquiredActive)} href="/library/acquired">
-                  Adquisiciones
+                  {dictionary.dashboard.acquisitions}
                 </Link>
               )}
               <Link
                 className={navLinkClass(isCoworkingActive && !isReservationsActive, true)}
                 href="/coworking"
               >
-                Coworking
+                {dictionary.dashboard.coworking}
               </Link>
               {activeUser && (
                 <Link
                   className={navLinkClass(isReservationsActive, true)}
                   href="/coworking/reservations"
                 >
-                  Reservas
+                  {dictionary.dashboard.reservations}
                 </Link>
               )}
               {activeUser && (
@@ -95,6 +98,7 @@ export default function LibraryShell({ children, user }) {
                   </span>
                 </span>
               )}
+              <LanguageSelector />
               <button
                 type="button"
                 onClick={() => setShowLogoutModal(true)}

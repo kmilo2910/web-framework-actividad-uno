@@ -14,6 +14,7 @@ import { purchaseRoutes } from './adapters/http/purchase.routes.js';
 import { makeAuthMiddleware } from './adapters/http/auth.middleware.js';
 import { ReservationsService } from './application/reservations.service.js';
 import { reservationRoutes } from './adapters/http/reservation.routes.js';
+import { spaceTranslations } from './i18n/space-translations.js';
 
 export function createApp() {
   const app = express();
@@ -49,7 +50,15 @@ export function createApp() {
     ['users', 'users', 'user'],
     ['spaces', 'spaces', 'space'],
   ]) {
-    const controller = makeCrudController(new CrudService(new JsonRepository(collection, prefix)));
+    const fields =
+      path === 'spaces' ? ['name', 'shortDescription', 'longDescription', 'benefits'] : [];
+    const controller = makeCrudController(
+      new CrudService(
+        new JsonRepository(collection, prefix),
+        fields,
+        path === 'spaces' ? spaceTranslations : {}
+      )
+    );
     app.use(`/api/${path}`, resourceRoutes(controller));
   }
   app.use('/api/purchases', purchaseRoutes(purchaseService, makeAuthMiddleware(firebaseAuth)));

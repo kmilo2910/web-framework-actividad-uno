@@ -8,13 +8,16 @@ import { auth } from '@/infrastructure/firebase/firebase.client';
 import Link from 'next/link';
 import DownloadReceipt from '@/components/DownloadReceipt';
 import BookCover from '@/components/BookCover';
+import { useI18n } from '@/i18n/provider';
 export default function AcquiredPage() {
   const [items, setItems] = useState([]);
   const [error, setError] = useState('');
+  const { dictionary } = useI18n();
+  const t = dictionary.acquisitions;
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (!user) {
-        setError('Debes iniciar sesión para ver tus adquisiciones');
+        setError(t.loginRequired);
         return;
       }
       apiClient
@@ -41,8 +44,8 @@ export default function AcquiredPage() {
   return (
     <LibraryShell>
       <div className="mx-auto max-w-7xl px-6 py-12 md:px-10 md:py-20">
-        <p className="text-xs font-bold uppercase tracking-[.2em] text-[#1f4f66]">Área personal</p>
-        <h1 className="mt-4 text-5xl font-semibold tracking-[-.06em]">Mis adquisiciones</h1>
+        <p className="text-xs font-bold uppercase tracking-[.2em] text-[#1f4f66]">{t.eyebrow}</p>
+        <h1 className="mt-4 text-5xl font-semibold tracking-[-.06em]">{t.title}</h1>
         {error && <p className="mt-8 text-red-700">{error}</p>}
         {!error && (
           <div className="mt-12 overflow-hidden rounded-2xl border border-[#d8d5ce] bg-white">
@@ -51,12 +54,12 @@ export default function AcquiredPage() {
                 <table className="w-full min-w-[700px] text-left text-sm">
                   <thead className="border-b border-[#d8d5ce] bg-[#f8f7f4] text-xs uppercase tracking-wider text-[#64707d]">
                     <tr>
-                      <th className="px-5 py-4">Portada</th>
-                      <th className="px-5 py-4">Publicación</th>
-                      <th className="px-5 py-4">Autor</th>
-                      <th className="px-5 py-4">Fecha de compra</th>
-                      <th className="px-5 py-4">Precio</th>
-                      <th className="px-5 py-4">Acciones</th>
+                      <th className="px-5 py-4">{t.cover}</th>
+                      <th className="px-5 py-4">{t.publication}</th>
+                      <th className="px-5 py-4">{t.author}</th>
+                      <th className="px-5 py-4">{t.purchaseDate}</th>
+                      <th className="px-5 py-4">{t.price}</th>
+                      <th className="px-5 py-4">{t.actions}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -94,7 +97,7 @@ export default function AcquiredPage() {
                 </table>
               </div>
             ) : (
-              <p className="text-[#64707d]">Todavía no tienes adquisiciones.</p>
+              <p className="text-[#64707d]">{t.empty}</p>
             )}
           </div>
         )}
