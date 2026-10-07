@@ -76,6 +76,7 @@ export default function ReserveButton({
       setReservation(created);
       setState('idle');
       setToast('Reserva confirmada correctamente');
+      router.refresh();
     } catch (error) {
       setState('error');
       setMessage(error.message);
