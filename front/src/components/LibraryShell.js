@@ -4,17 +4,21 @@ import Link from 'next/link';
 import { BookOpen, LogOut, UserRound } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth, firebaseAuthAdapter } from '@/infrastructure/firebase/firebase.client';
+import { useUser } from '@auth0/nextjs-auth0/client';
 import ProtectedRoute from '@/components/ProtectedRoute';
+import LanguageSelector from '@/i18n/LanguageSelector';
+import { useI18n } from '@/i18n/provider';
 
 export default function LibraryShell({ children, user }) {
   const router = useRouter();
   const pathname = usePathname();
+  const { user: auth0User } = useUser();
   const [activeUser, setActiveUser] = useState(user || null);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
-  useEffect(() => onAuthStateChanged(auth, setActiveUser), [user]);
+  const { dictionary } = useI18n();
+  const logoutText = dictionary.logout;
+  useEffect(() => setActiveUser(auth0User || user || null), [auth0User, user]);
   const homePath = activeUser ? '/dashboard' : '/';
   const isAcquiredActive = pathname === '/library/acquired';
   const isLibraryActive =
@@ -27,7 +31,7 @@ export default function LibraryShell({ children, user }) {
   async function confirmLogout() {
     setLoggingOut(true);
     try {
-      await firebaseAuthAdapter.logout();
+      window.location.assign('/auth/logout');
       setActiveUser(null);
       setShowLogoutModal(false);
       router.replace('/login');
@@ -56,25 +60,25 @@ export default function LibraryShell({ children, user }) {
             </Link>
             <nav className="flex items-center gap-2 text-sm text-[#64707d] md:gap-5">
               <Link className={`${navLinkClass(isLibraryActive)} font-medium`} href="/library">
-                Biblioteca
+                {dictionary.dashboard.library}
               </Link>
               {activeUser && (
                 <Link className={navLinkClass(isAcquiredActive)} href="/library/acquired">
-                  Adquisiciones
+                  {dictionary.dashboard.acquisitions}
                 </Link>
               )}
               <Link
                 className={navLinkClass(isCoworkingActive && !isReservationsActive, true)}
                 href="/coworking"
               >
-                Coworking
+                {dictionary.dashboard.coworking}
               </Link>
               {activeUser && (
                 <Link
                   className={navLinkClass(isReservationsActive, true)}
                   href="/coworking/reservations"
                 >
-                  Reservas
+                  {dictionary.dashboard.reservations}
                 </Link>
               )}
               {activeUser && (
@@ -95,6 +99,7 @@ export default function LibraryShell({ children, user }) {
                   </span>
                 </span>
               )}
+              <LanguageSelector />
               <button
                 type="button"
                 onClick={() => setShowLogoutModal(true)}
@@ -116,11 +121,10 @@ export default function LibraryShell({ children, user }) {
           >
             <div className="w-full max-w-md rounded-3xl bg-white p-7 shadow-2xl">
               <h2 id="logout-title" className="text-2xl font-semibold text-[#17202a]">
-                ¿Deseas cerrar sesión?
+                {logoutText.title}
               </h2>
               <p className="mt-3 text-sm leading-relaxed text-[#64707d]">
-                Se eliminarán los datos de tu sesión en este dispositivo y tendrás que volver a
-                iniciar sesión para acceder a Nexus.
+                {logoutText.description}
               </p>
               <div className="mt-7 flex justify-end gap-3">
                 <button
@@ -129,7 +133,7 @@ export default function LibraryShell({ children, user }) {
                   disabled={loggingOut}
                   className="rounded-full border border-[#d8d5ce] px-5 py-2.5 text-sm font-semibold text-[#64707d] transition hover:bg-[#f4f1eb] disabled:opacity-50"
                 >
-                  Cancelar
+                  {dictionary.common.cancel}
                 </button>
                 <button
                   type="button"
@@ -137,7 +141,7 @@ export default function LibraryShell({ children, user }) {
                   disabled={loggingOut}
                   className="rounded-full bg-[#1f4f66] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#173b4d] disabled:cursor-wait disabled:opacity-60"
                 >
-                  {loggingOut ? 'Cerrando sesión...' : 'Sí, cerrar sesión'}
+                  {loggingOut ? logoutText.closing : logoutText.confirm}
                 </button>
               </div>
             </div>

@@ -2,9 +2,12 @@
 import { Download, FileText } from 'lucide-react';
 import { jsPDF } from 'jspdf';
 import { formatCurrency } from '@/core/formatters/currency';
+import { useI18n } from '@/i18n/provider';
 
 export default function DownloadReceipt({ purchase, book }) {
   const title = book?.title || purchase.bookId;
+  const { dictionary } = useI18n();
+  const t = dictionary.acquisitions;
   function productPdf() {
     const pdf = new jsPDF();
     pdf.setFontSize(24);
@@ -35,13 +38,13 @@ export default function DownloadReceipt({ purchase, book }) {
         onClick={productPdf}
         className="inline-flex items-center gap-2 text-sm font-semibold text-[#1f4f66] hover:underline"
       >
-        <FileText size={16} /> Descargar PDF
+        <FileText size={16} /> {t.downloadBook}
       </button>
       <button
         onClick={receiptPdf}
         className="inline-flex items-center gap-2 text-sm font-semibold text-[#64707d] hover:underline"
       >
-        <Download size={16} /> Comprobante
+        <Download size={16} /> {t.downloadReceipt}
       </button>
     </div>
   );

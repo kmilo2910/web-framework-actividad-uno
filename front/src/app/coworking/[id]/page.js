@@ -1,17 +1,19 @@
 import Link from 'next/link';
-import { ArrowLeft, Building2, Coffee, Users } from 'lucide-react';
+import { ArrowLeft, Coffee } from 'lucide-react';
 import LibraryShell from '@/components/LibraryShell';
 import ReserveButton from '@/components/ReserveButton';
 import SpaceStatus from '@/components/SpaceStatus';
+import SpaceDetailInfo from '@/components/SpaceDetailInfo';
+import { cookies } from 'next/headers';
+import { normalizeLanguage } from '@/i18n/config';
+import { getSpace as getSpaceFromDatabase } from '@/server/spaces';
 export const dynamic = 'force-dynamic';
-async function getSpace(id) {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/spaces/${id}`, {
-    cache: 'no-store',
-  });
-  return response.ok ? response.json() : null;
+async function getSpace(id, language) {
+  return getSpaceFromDatabase(id, language);
 }
 export default async function SpaceDetailPage({ params }) {
-  const space = await getSpace((await params).id);
+  const language = normalizeLanguage((await cookies()).get('nexus-locale')?.value);
+  const space = await getSpace((await params).id, language);
   if (!space)
     return (
       <LibraryShell>
@@ -39,30 +41,7 @@ export default async function SpaceDetailPage({ params }) {
             <div className="mt-3">
               <SpaceStatus space={space} />
             </div>
-            <h1 className="mt-4 text-4xl font-semibold tracking-[-.05em] md:text-5xl">
-              {space.name}
-            </h1>
-            <div className="mt-3 flex flex-wrap gap-2">
-              <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-sm font-medium text-[#f4f1eb]">
-                <Users size={15} /> Capacidad: {space.capacity} personas
-              </span>
-              <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-sm font-medium text-[#f4f1eb]">
-                <Building2 size={15} /> Planta {space.floor}
-              </span>
-            </div>
-            <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[#dceee2]">
-              {space.longDescription || space.shortDescription}
-            </p>
-            <div className="mt-4 grid gap-3 sm:grid-cols-3">
-              {(space.benefits || []).map((benefit) => (
-                <div
-                  key={benefit}
-                  className="rounded-2xl border border-white/20 bg-white/10 p-4 text-sm"
-                >
-                  {benefit}
-                </div>
-              ))}
-            </div>
+            <SpaceDetailInfo space={space} />
             <div className="mt-4 rounded-2xl border border-white/15 bg-black/10 p-3 md:p-4">
               <ReserveButton
                 spaceId={space.id}

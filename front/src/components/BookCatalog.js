@@ -2,26 +2,26 @@
 import { useEffect, useMemo, useState } from 'react';
 import { ChevronDown, Search, SlidersHorizontal } from 'lucide-react';
 import BookCard from '@/components/BookCard';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '@/infrastructure/firebase/firebase.client';
+import { useUser } from '@auth0/nextjs-auth0/client';
 import { apiClient } from '@/infrastructure/http/api.client';
+import { useI18n } from '@/i18n/provider';
 export default function BookCatalog({ books }) {
   const [query, setQuery] = useState('');
   const [type, setType] = useState('');
   const [category, setCategory] = useState('');
   const [year, setYear] = useState('');
   const [acquiredBookIds, setAcquiredBookIds] = useState([]);
+  const { user } = useUser();
+  const { dictionary } = useI18n();
+  const t = dictionary.library;
   const hasFilters = query || type || category || year;
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (!user) return;
-      apiClient
-        .get('/api/purchases/mine')
-        .then((purchases) => setAcquiredBookIds(purchases.map((purchase) => purchase.bookId)))
-        .catch(() => setAcquiredBookIds([]));
-    });
-    return unsubscribe;
-  }, []);
+    if (!user) return;
+    apiClient
+      .get('/api/purchases')
+      .then((purchases) => setAcquiredBookIds(purchases.map((purchase) => purchase.bookId)))
+      .catch(() => setAcquiredBookIds([]));
+  }, [user]);
   const categories = [...new Set(books.map((book) => book.category))];
   const years = [...new Set(books.map((book) => book.year))].sort((a, b) => b - a);
   const visible = useMemo(
@@ -48,7 +48,7 @@ export default function BookCatalog({ books }) {
           <Search size={18} className="text-[#64707d]" />
           <input
             className="w-full bg-transparent outline-none"
-            placeholder="Buscar por título o autor"
+            placeholder={t.searchPlaceholder}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
@@ -62,9 +62,9 @@ export default function BookCatalog({ books }) {
                 value={type}
                 onChange={(e) => setType(e.target.value)}
               >
-                <option value="">Todos</option>
-                <option value="book">Libros</option>
-                <option value="magazine">Revistas</option>
+                <option value="">{t.all}</option>
+                <option value="book">{t.books}</option>
+                <option value="magazine">{t.magazines}</option>
               </select>
               <ChevronDown
                 size={16}
@@ -78,7 +78,7 @@ export default function BookCatalog({ books }) {
               value={category}
               onChange={(e) => setCategory(e.target.value)}
             >
-              <option value="">Categorías</option>
+              <option value="">{t.categories}</option>
               {categories.map((item) => (
                 <option key={item} value={item}>
                   {item}
@@ -96,7 +96,7 @@ export default function BookCatalog({ books }) {
               value={year}
               onChange={(e) => setYear(e.target.value)}
             >
-              <option value="">Año</option>
+              <option value="">{t.year}</option>
               {years.map((item) => (
                 <option key={item} value={item}>
                   {item}
@@ -114,7 +114,7 @@ export default function BookCatalog({ books }) {
               onClick={clearFilters}
               className="rounded-xl px-3 py-3 text-sm font-semibold text-[#1f4f66] transition hover:bg-[#e7eef0]"
             >
-              Limpiar filtros
+              {t.clearFilters}
             </button>
           )}
         </div>
@@ -127,10 +127,8 @@ export default function BookCatalog({ books }) {
         </div>
       ) : (
         <div className="my-10 rounded-2xl border border-dashed border-[#b8d2d6] bg-[#e7eef0]/60 px-6 py-12 text-center">
-          <p className="text-lg font-semibold text-[#17202a]">No encontramos coincidencias</p>
-          <p className="mt-2 text-sm text-[#64707d]">
-            La combinación de búsqueda y filtros no encontró resultados.
-          </p>
+          <p className="text-lg font-semibold text-[#17202a]">{t.noResultsTitle}</p>
+          <p className="mt-2 text-sm text-[#64707d]">{t.noResultsDescription}</p>
         </div>
       )}
     </>

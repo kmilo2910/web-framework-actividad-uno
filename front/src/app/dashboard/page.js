@@ -1,21 +1,27 @@
+'use client';
+
 import Link from 'next/link';
 import { ArrowUpRight, BookOpen, Coffee, Library, UsersRound } from 'lucide-react';
 import LibraryShell from '@/components/LibraryShell';
 import PersonalStats from '@/components/PersonalStats';
+import { useI18n } from '@/i18n/provider';
 
 export default function DashboardPage() {
+  const { dictionary } = useI18n();
+  const t = dictionary.dashboard;
+
   return (
     <LibraryShell>
       <div className="mx-auto flex min-h-[calc(100vh-81px)] max-w-7xl flex-col justify-center px-6 py-8 md:px-10 md:py-10 lg:min-h-[calc(100vh-69px)] lg:py-6">
         <div className="max-w-3xl">
           <p className="mb-3 text-xs font-bold uppercase tracking-[.2em] text-[#1f4f66]">
-            Área personal
+            {t.home}
           </p>
           <h1 className="text-4xl font-semibold tracking-[-.06em] md:text-5xl lg:text-[3.4rem]">
-            Tu campus, conectado.
+            {t.title}
           </h1>
           <p className="mt-4 max-w-xl text-base leading-relaxed text-[#64707d] md:text-lg">
-            Continúa explorando recursos, encuentra un espacio para trabajar y organiza tu tiempo.
+            {t.description}
           </p>
         </div>
         <div className="mt-7 grid gap-4 md:grid-cols-2">
@@ -28,15 +34,15 @@ export default function DashboardPage() {
               <ArrowUpRight className="transition group-hover:translate-x-1 group-hover:-translate-y-1" />
             </div>
             <h2 className="mt-auto pt-10 text-3xl font-semibold tracking-tight transition-colors duration-300 group-hover:text-white">
-              Biblioteca
+              {t.library}
             </h2>
             <p className="mt-2 max-w-sm text-[#64707d] transition-colors duration-300 group-hover:text-[#dbe8ea]">
-              Explora libros y revistas del catálogo
+              {t.libraryDescription}
               <br />
               universitario.
             </p>
             <span className="mt-5 inline-flex w-fit items-center rounded-full bg-[#1f4f66] px-4 py-2 text-sm font-semibold text-white transition-colors duration-300 group-hover:bg-white group-hover:text-[#1f4f66]">
-              Explorar biblioteca
+              {t.exploreLibrary}
             </span>
           </Link>
           <Link
@@ -48,13 +54,13 @@ export default function DashboardPage() {
               <ArrowUpRight className="transition group-hover:translate-x-1 group-hover:-translate-y-1" />
             </div>
             <h2 className="mt-auto pt-10 text-3xl font-semibold tracking-tight transition-colors duration-300 group-hover:text-white">
-              Coworking
+              {t.coworking}
             </h2>
             <p className="mt-2 max-w-sm text-[#64707d] transition-colors duration-300 group-hover:text-[#dbe8ea]">
-              Consulta espacios disponibles y gestiona tus reservas.
+              {t.coworkingDescription}
             </p>
             <span className="mt-5 inline-flex w-fit items-center rounded-full bg-[#1f4f66] px-4 py-2 text-sm font-semibold text-white transition-colors duration-300 group-hover:bg-white group-hover:text-[#1f4f66]">
-              Ver espacios
+              {t.viewSpaces}
             </span>
           </Link>
         </div>
@@ -66,13 +72,13 @@ export default function DashboardPage() {
           >
             <UsersRound className="text-[#1f4f66] transition-colors duration-300 group-hover:text-[#f4f1eb]" />
             <p className="mt-5 text-sm text-[#64707d] transition-colors duration-300 group-hover:text-[#dbe8ea]">
-              Tus reservas
+              {t.yourReservations}
             </p>
             <p className="mt-2 min-h-7 text-xl font-semibold transition-colors duration-300 group-hover:text-white">
-              0 espacios reservados
+              {t.reservedSpaces(0)}
             </p>
             <span className="mt-auto inline-flex items-center gap-1 text-sm font-semibold text-[#1f4f66] transition-colors duration-300 group-hover:text-white">
-              Ver reservas{' '}
+              {t.viewReservations}{' '}
               <ArrowUpRight size={15} className="transition group-hover:translate-x-0.5" />
             </span>
           </Link>

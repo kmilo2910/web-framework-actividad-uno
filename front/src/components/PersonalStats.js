@@ -1,22 +1,22 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '@/infrastructure/firebase/firebase.client';
+import { useUser } from '@auth0/nextjs-auth0/client';
 import { apiClient } from '@/infrastructure/http/api.client';
 import Link from 'next/link';
 import { ArrowUpRight, BookOpen } from 'lucide-react';
+import { useI18n } from '@/i18n/provider';
 export default function PersonalStats() {
+  const { dictionary } = useI18n();
+  const t = dictionary.dashboard;
+  const { user } = useUser();
   const [purchases, setPurchases] = useState(null);
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (!user) return;
-      apiClient
-        .get('/api/purchases/mine')
-        .then(setPurchases)
-        .catch(() => setPurchases([]));
-    });
-    return unsubscribe;
-  }, []);
+    if (!user) return;
+    apiClient
+      .get('/api/purchases')
+      .then(setPurchases)
+      .catch(() => setPurchases([]));
+  }, [user]);
   return (
     <Link
       href="/library/acquired"
@@ -24,15 +24,13 @@ export default function PersonalStats() {
     >
       <BookOpen className="text-[#1f4f66] transition-colors duration-300 group-hover:text-[#f4f1eb]" />
       <p className="mt-5 text-sm text-[#64707d] transition-colors duration-300 group-hover:text-[#dbe8ea]">
-        Tu biblioteca
+        {t.yourLibrary}
       </p>
       <p className="mt-2 min-h-7 text-xl font-semibold transition-colors duration-300 group-hover:text-white">
-        {purchases === null
-          ? 'Cargando...'
-          : `${purchases.length} ${purchases.length === 1 ? 'adquisición' : 'adquisiciones'}`}
+        {purchases === null ? t.loading : t.acquisitionsCount(purchases.length)}
       </p>
       <span className="mt-auto inline-flex items-center gap-1 text-sm font-semibold text-[#1f4f66] transition-colors duration-300 group-hover:text-white">
-        Ver adquisiciones{' '}
+        {t.viewAcquisitions}{' '}
         <ArrowUpRight size={15} className="transition group-hover:translate-x-0.5" />
       </span>
     </Link>

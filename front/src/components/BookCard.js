@@ -1,9 +1,13 @@
+'use client';
 import Link from 'next/link';
 import { ArrowUpRight } from 'lucide-react';
 import { formatCurrency } from '@/core/formatters/currency';
 import BookCover from '@/components/BookCover';
+import { useI18n } from '@/i18n/provider';
 
 export default function BookCard({ book, acquired = false }) {
+  const { dictionary } = useI18n();
+  const t = dictionary.library;
   return (
     <article className="group flex min-h-64 flex-col justify-between overflow-hidden rounded-2xl border border-[#d8d5ce] bg-white shadow-[0_8px_24px_rgba(23,32,42,0.06)] transition-all duration-500 ease-in-out hover:-translate-y-1 hover:border-[#b8d2d6] hover:shadow-[0_18px_40px_rgba(31,79,102,0.16)]">
       <BookCover
@@ -16,11 +20,11 @@ export default function BookCard({ book, acquired = false }) {
           <div className="mb-7 flex items-start justify-between gap-3">
             <div className="flex flex-wrap items-center gap-2">
               <span className="rounded-full bg-[#e7eef0] px-3 py-1 text-xs font-semibold uppercase tracking-wider text-[#1f4f66]">
-                {book.type === 'magazine' ? 'Revista' : 'Libro'}
+                {book.type === 'magazine' ? t.typeMagazine : t.typeBook}
               </span>
               {acquired && (
                 <span className="inline-flex items-center rounded-full border border-[#9bd3ad] bg-[#e8f5ed] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[.12em] text-[#237a43]">
-                  Adquirido
+                  {t.acquired}
                 </span>
               )}
             </div>
@@ -35,7 +39,7 @@ export default function BookCard({ book, acquired = false }) {
             className="flex items-center gap-1 text-sm font-semibold text-[#1f4f66]"
             href={`/library/${book.id}`}
           >
-            Ver detalle <ArrowUpRight size={16} />
+            {t.detail} <ArrowUpRight size={16} />
           </Link>
         </div>
       </div>
