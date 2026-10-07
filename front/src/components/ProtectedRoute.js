@@ -8,25 +8,27 @@ export default function ProtectedRoute({ children }) {
   const router = useRouter();
   const pathname = usePathname();
   const [checking, setChecking] = useState(true);
-  const { user, error, isLoading } = useUser();
+  const { user, isLoading } = useUser();
 
   useEffect(() => {
     if (isLoading) return;
     setChecking(false);
-    if (!user && !error) {
+    if (!user) {
       const returnTo =
         pathname && pathname !== '/login' ? `?returnTo=${encodeURIComponent(pathname)}` : '';
       router.replace(`/login${returnTo}`);
     }
-  }, [isLoading, pathname, router, user, error]);
+  }, [isLoading, pathname, router, user]);
 
-  if (checking || !user) {
+  if (checking || isLoading) {
     return (
       <main className="grid min-h-screen place-items-center bg-[#f4f1eb] px-6 text-[#64707d]">
         <p className="text-sm font-medium">Verificando tu sesión...</p>
       </main>
     );
   }
+
+  if (!user) return null;
 
   return children;
 }

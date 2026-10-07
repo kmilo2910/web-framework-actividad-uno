@@ -5,6 +5,7 @@ import { localizeRecord } from '../i18n/localize.js';
 import { bookTranslations } from '../i18n/book-translations.js';
 import { bookTranslationsExtra } from '../i18n/book-translations-extra.js';
 import { categoryTranslations } from '../i18n/category-translations.js';
+import { bookTranslationsCatalog } from '../i18n/book-translations-catalog.js';
 export class BooksService {
   constructor(bookRepository) {
     this.bookRepository = bookRepository;
@@ -43,6 +44,7 @@ export class BooksService {
     const localizedSource = {
       ...book,
       translations: {
+        ...bookTranslationsCatalog[book.id],
         ...bookTranslationsExtra[book.id],
         ...bookTranslations[book.id],
         ...book.translations,

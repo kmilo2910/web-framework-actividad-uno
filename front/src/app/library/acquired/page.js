@@ -9,6 +9,7 @@ import DownloadReceipt from '@/components/DownloadReceipt';
 import BookCover from '@/components/BookCover';
 import { useI18n } from '@/i18n/provider';
 import { ArrowUpRight, BookOpen } from 'lucide-react';
+import LibraryBackLink from '@/components/LibraryBackLink';
 export default function AcquiredPage() {
   const [items, setItems] = useState([]);
   const [error, setError] = useState('');
@@ -39,6 +40,7 @@ export default function AcquiredPage() {
   return (
     <LibraryShell>
       <div className="mx-auto max-w-7xl px-6 py-12 md:px-10 md:py-20">
+        <LibraryBackLink href="/library" labelKey="backToLibrary" dictionaryKey="acquisitions" />
         <p className="text-xs font-bold uppercase tracking-[.2em] text-[#1f4f66]">{t.eyebrow}</p>
         <h1 className="mt-4 text-5xl font-semibold tracking-[-.06em]">{t.title}</h1>
         {error && <p className="mt-8 text-red-700">{error}</p>}
