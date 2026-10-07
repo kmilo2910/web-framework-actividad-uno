@@ -22,7 +22,13 @@ for (const collection of collections) {
   } else {
     if (collection === 'books') {
       for (const row of seed.books || []) {
-        if (row.coverUrl && !(await repository.findById(row.id))?.coverUrl)
+        const current = await repository.findById(row.id);
+        if (!current) {
+          await repository.create(row);
+          console.log(`Agregado ${row.id} a books`);
+          continue;
+        }
+        if (row.coverUrl && !current.coverUrl)
           await repository.update(row.id, { coverUrl: row.coverUrl });
       }
     }

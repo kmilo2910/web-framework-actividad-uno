@@ -10,6 +10,6 @@ export default async function Bestsellers() {
       next: { revalidate: 300, tags: ['bestsellers'] },
     }
   );
-  const books = response.ok ? (await response.json()).slice(0, 3) : [];
+  const books = response.ok ? (await response.json()).slice(0, 10) : [];
   return <BestsellerList books={books} />;
 }

@@ -8,6 +8,16 @@ const covers = {
   'book-3': 'https://images-na.ssl-images-amazon.com/images/P/0135957052.01.LZZZZZZZ.jpg',
   'book-4': 'https://images-na.ssl-images-amazon.com/images/P/1857150031.01.LZZZZZZZ.jpg',
   'book-5': 'https://images-na.ssl-images-amazon.com/images/P/1449373321.01.LZZZZZZZ.jpg',
+  'book-6': 'https://images-na.ssl-images-amazon.com/images/P/0134757599.01.LZZZZZZZ.jpg',
+  'book-7': 'https://images.squarespace-cdn.com/content/v1/5e0129c5956b7a5624566864/1591301114319-ANPBYF2U0DCFBVY5RUSU/ydkjsy-get-started.png',
+  'book-8': 'https://images-na.ssl-images-amazon.com/images/P/0137081073.01.LZZZZZZZ.jpg',
+  'book-9': 'https://images-na.ssl-images-amazon.com/images/P/0321127420.01.LZZZZZZZ.jpg',
+  'book-10': 'https://images-na.ssl-images-amazon.com/images/P/0321125215.01.LZZZZZZZ.jpg',
+  'book-11': 'https://images-na.ssl-images-amazon.com/images/P/0465050654.01.LZZZZZZZ.jpg',
+  'book-12': 'https://images-na.ssl-images-amazon.com/images/P/0062316095.01.LZZZZZZZ.jpg',
+  'book-13': 'https://images-na.ssl-images-amazon.com/images/P/0307474720.01.LZZZZZZZ.jpg',
+  'book-14': 'https://images-na.ssl-images-amazon.com/images/P/0156012197.01.LZZZZZZZ.jpg',
+  'book-15': 'https://images-na.ssl-images-amazon.com/images/P/0140268863.01.LZZZZZZZ.jpg',
   'mag-1': 'https://content-historia.nationalgeographic.com.es/medio/2024/12/10/covadonga_3694c1ab_241210151443_1280x1696.webp',
 };
 
