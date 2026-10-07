@@ -7,8 +7,13 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '@/infrastructure/firebase/firebase.client';
 import CancelReservationButton from '@/components/CancelReservationButton';
 import { CalendarDays, Clock3, Timer } from 'lucide-react';
+import { useI18n } from '@/i18n/provider';
 export default function ReservationsPage() {
   const [items, setItems] = useState([]);
+  const { dictionary, language } = useI18n();
+  const t = dictionary.reservations;
+  const locale =
+    { es: 'es-CO', en: 'en-US', fr: 'fr-FR', it: 'it-IT', de: 'de-DE' }[language] || 'es-CO';
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) apiClient.get('/api/reservations/mine').then(setItems);
@@ -19,9 +24,9 @@ export default function ReservationsPage() {
     <LibraryShell>
       <div className="mx-auto max-w-7xl px-6 py-12 md:px-10 md:py-20">
         <Link href="/coworking" className="text-sm font-semibold text-[#1f4f66]">
-          ← Volver a coworking
+          ← {dictionary.common.back} {dictionary.dashboard.coworking}
         </Link>
-        <h1 className="mt-8 text-5xl font-semibold tracking-[-.06em]">Mis reservas</h1>
+        <h1 className="mt-8 text-5xl font-semibold tracking-[-.06em]">{t.title}</h1>
         <div className="mt-10 grid gap-4">
           {items.length ? (
             items.map((item) => (
@@ -41,22 +46,22 @@ export default function ReservationsPage() {
                           : 'bg-[#fff1eb] text-[#a4511f]'
                       }`}
                     >
-                      {item.status === 'active' ? 'Activa' : 'Cancelada'}
+                      {item.status === 'active' ? t.active : t.cancelled}
                     </span>
                   </div>
                   <div className="mt-4 flex flex-wrap gap-2 text-sm text-[#334155]">
                     <span className="inline-flex items-center gap-1.5 rounded-full bg-[#e8f3eb] px-3 py-1.5">
                       <CalendarDays size={14} className="text-[#2f6f4e]" />
-                      {new Date(item.startsAt).toLocaleDateString('es-CO')}
+                      {new Date(item.startsAt).toLocaleDateString(locale)}
                     </span>
                     <span className="inline-flex items-center gap-1.5 rounded-full bg-[#e8f3eb] px-3 py-1.5">
                       <Clock3 size={14} className="text-[#2f6f4e]" />
-                      {new Date(item.startsAt).toLocaleTimeString('es-CO', {
+                      {new Date(item.startsAt).toLocaleTimeString(locale, {
                         hour: '2-digit',
                         minute: '2-digit',
                       })}{' '}
                       —{' '}
-                      {new Date(item.endsAt).toLocaleTimeString('es-CO', {
+                      {new Date(item.endsAt).toLocaleTimeString(locale, {
                         hour: '2-digit',
                         minute: '2-digit',
                       })}
@@ -64,7 +69,7 @@ export default function ReservationsPage() {
                     <span className="inline-flex items-center gap-1.5 rounded-full bg-[#e8f3eb] px-3 py-1.5">
                       <Timer size={14} className="text-[#2f6f4e]" />
                       {Math.round((new Date(item.endsAt) - new Date(item.startsAt)) / 60000)}{' '}
-                      minutos
+                      {dictionary.coworking.minutes}
                     </span>
                   </div>
                 </div>
@@ -85,7 +90,7 @@ export default function ReservationsPage() {
               </article>
             ))
           ) : (
-            <p className="text-[#64707d]">Todavía no tienes reservas.</p>
+            <p className="text-[#64707d]">{t.empty}</p>
           )}
         </div>
       </div>

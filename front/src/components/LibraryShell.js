@@ -17,6 +17,7 @@ export default function LibraryShell({ children, user }) {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
   const { dictionary } = useI18n();
+  const logoutText = dictionary.logout;
   useEffect(() => onAuthStateChanged(auth, setActiveUser), [user]);
   const homePath = activeUser ? '/dashboard' : '/';
   const isAcquiredActive = pathname === '/library/acquired';
@@ -120,11 +121,10 @@ export default function LibraryShell({ children, user }) {
           >
             <div className="w-full max-w-md rounded-3xl bg-white p-7 shadow-2xl">
               <h2 id="logout-title" className="text-2xl font-semibold text-[#17202a]">
-                ¿Deseas cerrar sesión?
+                {logoutText.title}
               </h2>
               <p className="mt-3 text-sm leading-relaxed text-[#64707d]">
-                Se eliminarán los datos de tu sesión en este dispositivo y tendrás que volver a
-                iniciar sesión para acceder a Nexus.
+                {logoutText.description}
               </p>
               <div className="mt-7 flex justify-end gap-3">
                 <button
@@ -133,7 +133,7 @@ export default function LibraryShell({ children, user }) {
                   disabled={loggingOut}
                   className="rounded-full border border-[#d8d5ce] px-5 py-2.5 text-sm font-semibold text-[#64707d] transition hover:bg-[#f4f1eb] disabled:opacity-50"
                 >
-                  Cancelar
+                  {dictionary.common.cancel}
                 </button>
                 <button
                   type="button"
@@ -141,7 +141,7 @@ export default function LibraryShell({ children, user }) {
                   disabled={loggingOut}
                   className="rounded-full bg-[#1f4f66] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#173b4d] disabled:cursor-wait disabled:opacity-60"
                 >
-                  {loggingOut ? 'Cerrando sesión...' : 'Sí, cerrar sesión'}
+                  {loggingOut ? logoutText.closing : logoutText.confirm}
                 </button>
               </div>
             </div>

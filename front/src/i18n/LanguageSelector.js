@@ -11,7 +11,7 @@ export default function LanguageSelector() {
   const { language, changeLanguage } = useI18n();
   const router = useRouter();
   return (
-    <label className="relative hidden items-center gap-1.5 rounded-full border border-[#d8d5ce] bg-white/70 px-3 py-2 text-xs font-semibold text-[#17202a] md:flex">
+    <label className="relative hidden cursor-pointer items-center gap-1.5 rounded-full border border-[#d8d5ce] bg-white/70 px-3 py-2 text-xs font-semibold text-[#17202a] transition hover:bg-white md:flex">
       <Globe2 size={14} className="text-[#64707d]" />
       <span className="sr-only">Seleccionar idioma</span>
       <select
@@ -21,7 +21,7 @@ export default function LanguageSelector() {
           changeLanguage(event.target.value);
           router.refresh();
         }}
-        className="cursor-pointer appearance-none bg-transparent pr-1 outline-none"
+        className="absolute inset-0 h-full w-full cursor-pointer appearance-none opacity-0 outline-none"
       >
         {SUPPORTED_LANGUAGES.map((item) => (
           <option key={item} value={item}>
