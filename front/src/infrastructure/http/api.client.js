@@ -1,4 +1,5 @@
 let backendUserToken = null;
+const apiBaseUrl = '';
 
 async function getAuthHeaders() {
   const response = await fetch('/auth/access-token', { credentials: 'include' });
@@ -7,7 +8,7 @@ async function getAuthHeaders() {
   if (!token) return {};
   const headers = { Authorization: `Bearer ${token}` };
   if (backendUserToken !== token) {
-    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/me`, { headers })
+    await fetch(`${apiBaseUrl}/api/auth/me`, { headers })
       .then((profileResponse) => {
         if (profileResponse.ok) backendUserToken = token;
       })
@@ -19,7 +20,7 @@ async function getAuthHeaders() {
 export const apiClient = {
   async get(path) {
     const authHeaders = await getAuthHeaders();
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${path}`, {
+    const response = await fetch(`${apiBaseUrl}${path}`, {
       headers: authHeaders,
     });
     if (!response.ok) throw new Error((await response.json()).error || 'Error en la API');
@@ -27,7 +28,7 @@ export const apiClient = {
   },
   async post(path, body) {
     const authHeaders = await getAuthHeaders();
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${path}`, {
+    const response = await fetch(`${apiBaseUrl}${path}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -40,7 +41,7 @@ export const apiClient = {
   },
   async patch(path, body = {}) {
     const authHeaders = await getAuthHeaders();
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${path}`, {
+    const response = await fetch(`${apiBaseUrl}${path}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
