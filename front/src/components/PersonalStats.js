@@ -13,7 +13,7 @@ export default function PersonalStats() {
   useEffect(() => {
     if (!user) return;
     apiClient
-      .get('/api/purchases/mine')
+      .get('/api/purchases')
       .then(setPurchases)
       .catch(() => setPurchases([]));
   }, [user]);

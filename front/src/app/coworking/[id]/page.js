@@ -6,15 +6,10 @@ import SpaceStatus from '@/components/SpaceStatus';
 import SpaceDetailInfo from '@/components/SpaceDetailInfo';
 import { cookies } from 'next/headers';
 import { normalizeLanguage } from '@/i18n/config';
+import { getSpace as getSpaceFromDatabase } from '@/server/spaces';
 export const dynamic = 'force-dynamic';
 async function getSpace(id, language) {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/spaces/${id}?lang=${language}`,
-    {
-      cache: 'no-store',
-    }
-  );
-  return response.ok ? response.json() : null;
+  return getSpaceFromDatabase(id, language);
 }
 export default async function SpaceDetailPage({ params }) {
   const language = normalizeLanguage((await cookies()).get('nexus-locale')?.value);

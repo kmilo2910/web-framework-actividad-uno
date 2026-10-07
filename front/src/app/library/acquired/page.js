@@ -19,14 +19,14 @@ export default function AcquiredPage() {
   useEffect(() => {
     if (!user) return;
     apiClient
-      .get('/api/purchases/mine')
+      .get('/api/purchases')
       .then(async (purchases) => {
         const items = await Promise.all(
           purchases.map(async (purchase) => {
             try {
-              const book = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL}/api/books/${purchase.bookId}`
-              ).then((response) => response.json());
+              const book = await fetch(`/api/books/${purchase.bookId}`).then((response) =>
+                response.json()
+              );
               return { ...purchase, book };
             } catch {
               return purchase;

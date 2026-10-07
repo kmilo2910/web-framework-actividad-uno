@@ -13,7 +13,7 @@ export default function PurchaseButton({ bookId }) {
   useEffect(() => {
     if (!user) return;
     apiClient
-      .get('/api/purchases/mine')
+      .get('/api/purchases')
       .then((items) => {
         if (items.some((item) => item.bookId === bookId)) {
           setState('done');

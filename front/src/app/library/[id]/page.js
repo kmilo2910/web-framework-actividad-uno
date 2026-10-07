@@ -2,22 +2,12 @@ import LibraryShell from '@/components/LibraryShell';
 import BookDetailInfo from '@/components/BookDetailInfo';
 import BookCover from '@/components/BookCover';
 import LibraryBackLink from '@/components/LibraryBackLink';
-import { cookies } from 'next/headers';
-import { normalizeLanguage } from '@/i18n/config';
+import { getBook } from '@/server/books';
 export const revalidate = 600;
-async function getBook(id, language) {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/books/${id}?lang=${language}`,
-    { cache: 'no-store' }
-  );
-  if (!response.ok) return null;
-  return response.json();
-}
 export const dynamic = 'force-dynamic';
 export default async function BookDetailPage({ params }) {
   const { id } = await params;
-  const language = normalizeLanguage((await cookies()).get('nexus-locale')?.value);
-  const book = await getBook(id, language);
+  const book = await getBook(id);
   if (!book)
     return (
       <LibraryShell>

@@ -1,4 +1,3 @@
-let backendUserToken = null;
 const apiBaseUrl = '';
 
 async function getAuthHeaders() {
@@ -6,15 +5,7 @@ async function getAuthHeaders() {
   if (!response.ok) return {};
   const { token } = await response.json();
   if (!token) return {};
-  const headers = { Authorization: `Bearer ${token}` };
-  if (backendUserToken !== token) {
-    await fetch(`${apiBaseUrl}/api/auth/me`, { headers })
-      .then((profileResponse) => {
-        if (profileResponse.ok) backendUserToken = token;
-      })
-      .catch(() => {});
-  }
-  return headers;
+  return { Authorization: `Bearer ${token}` };
 }
 
 export const apiClient = {

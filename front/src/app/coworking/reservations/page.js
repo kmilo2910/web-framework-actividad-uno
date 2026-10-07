@@ -15,7 +15,7 @@ export default function ReservationsPage() {
   const locale =
     { es: 'es-CO', en: 'en-US', fr: 'fr-FR', it: 'it-IT', de: 'de-DE' }[language] || 'es-CO';
   useEffect(() => {
-    if (user) apiClient.get('/api/reservations/mine').then(setItems);
+    if (user) apiClient.get('/api/reservations').then(setItems);
   }, [user]);
   return (
     <LibraryShell>

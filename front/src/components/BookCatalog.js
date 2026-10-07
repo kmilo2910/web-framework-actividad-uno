@@ -18,7 +18,7 @@ export default function BookCatalog({ books }) {
   useEffect(() => {
     if (!user) return;
     apiClient
-      .get('/api/purchases/mine')
+      .get('/api/purchases')
       .then((purchases) => setAcquiredBookIds(purchases.map((purchase) => purchase.bookId)))
       .catch(() => setAcquiredBookIds([]));
   }, [user]);

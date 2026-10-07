@@ -8,6 +8,7 @@ import CoworkingHighlights from '@/components/CoworkingHighlights';
 import SpaceCardInfo from '@/components/SpaceCardInfo';
 import { cookies } from 'next/headers';
 import { normalizeLanguage } from '@/i18n/config';
+import { listSpaces } from '@/server/spaces';
 export const dynamic = 'force-dynamic';
 
 function RatingStars({ rating }) {
@@ -41,10 +42,7 @@ function RatingStars({ rating }) {
 
 async function getSpaces() {
   const language = normalizeLanguage((await cookies()).get('nexus-locale')?.value);
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/spaces?lang=${language}`, {
-    cache: 'no-store',
-  });
-  return response.ok ? response.json() : [];
+  return listSpaces(language);
 }
 export default async function CoworkingPage() {
   const spaces = await getSpaces();

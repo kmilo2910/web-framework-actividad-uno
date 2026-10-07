@@ -5,7 +5,7 @@ import { useState } from 'react';
 export default function BookCover({ book, className = '', imageClassName = '' }) {
   const [loading, setLoading] = useState(Boolean(book.coverUrl));
   const [failed, setFailed] = useState(!book.coverUrl);
-  const source = `${process.env.NEXT_PUBLIC_API_URL}/api/books/${book.id}/cover`;
+  const source = book.coverUrl?.startsWith('/') ? book.coverUrl : `/api/books/${book.id}/cover`;
 
   return (
     <div className={`relative flex items-center justify-center overflow-hidden ${className}`}>
