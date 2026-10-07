@@ -1,36 +1,19 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { ArrowRight, BookOpen, Check, Coffee, ShieldCheck } from 'lucide-react';
-import { AuthUseCase } from '@/application/auth.use-case';
-import { firebaseAuthAdapter } from '@/infrastructure/firebase/firebase.client';
-import { apiClient } from '@/infrastructure/http/api.client';
 import LanguageSelector from '@/i18n/LanguageSelector';
 import { useI18n } from '@/i18n/provider';
 
-const authUseCase = new AuthUseCase(firebaseAuthAdapter);
-
 export default function LoginPage() {
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [user, setUser] = useState(null);
   const { dictionary } = useI18n();
   const t = dictionary.auth;
   async function login() {
     setLoading(true);
     setError('');
-    try {
-      await authUseCase.loginWithGoogle();
-      const profile = await apiClient.get('/api/auth/me');
-      setUser(profile);
-      router.push('/dashboard');
-    } catch (err) {
-      setError(err.message || t.loginError);
-    } finally {
-      setLoading(false);
-    }
+    window.location.assign('/auth/login?connection=google-oauth2&returnTo=/dashboard');
   }
   return (
     <main className="relative min-h-screen bg-[#f4f1eb] p-4 text-[#17202a] md:p-6">
@@ -98,12 +81,6 @@ export default function LoginPage() {
               </button>
             </div>
             {error && <p className="error mt-5">{error}</p>}
-            {user && (
-              <div className="success mt-5">
-                <strong>{t.signedIn}</strong>
-                <span>{user.email}</span>
-              </div>
-            )}
             <div className="mt-10 flex items-center gap-2 text-xs text-[#64707d]">
               <Coffee size={15} /> {t.communityAccess}
             </div>

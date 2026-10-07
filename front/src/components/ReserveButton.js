@@ -1,8 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { useUser } from '@auth0/nextjs-auth0/client';
 import { apiClient } from '@/infrastructure/http/api.client';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '@/infrastructure/firebase/firebase.client';
 import Toast from '@/components/Toast';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -27,6 +26,7 @@ export default function ReserveButton({
   const [reservation, setReservation] = useState(null);
   const [toast, setToast] = useState('');
   const [cancelled, setCancelled] = useState(false);
+  const { user } = useUser();
   const { dictionary, language } = useI18n();
   const t = dictionary.coworking;
   const localeByLanguage = { es: 'es-CO', en: 'en-US', fr: 'fr-FR', it: 'it-IT', de: 'de-DE' };
@@ -47,7 +47,7 @@ export default function ReserveButton({
     }
   );
   const [scheduleMessage, setScheduleMessage] = useState('');
-  useEffect(() => onAuthStateChanged(auth, (user) => setCurrentEmail(user?.email || null)), []);
+  useEffect(() => setCurrentEmail(user?.email || null), [user]);
   const isOwner = currentEmail && occupiedByEmail && currentEmail === occupiedByEmail;
   const minutesUntilStart = occupiedFrom
     ? (new Date(occupiedFrom).getTime() - Date.now()) / 60000

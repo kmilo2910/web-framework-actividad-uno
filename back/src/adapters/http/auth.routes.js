@@ -1,15 +1,15 @@
 import { Router } from 'express';
 import { makeAuthMiddleware } from './auth.middleware.js';
 
-export function authRoutes({ authService, firebaseAuth, frontendUrl }) {
+export function authRoutes({ authService, authProvider, frontendUrl }) {
   const router = Router();
-  const requireAuth = makeAuthMiddleware(firebaseAuth);
+  const requireAuth = makeAuthMiddleware(authProvider);
   router.get('/config', (_req, res) =>
-    res.json({ firebaseConfigured: Boolean(firebaseAuth), frontendUrl })
+    res.json({ auth0Configured: Boolean(authProvider), frontendUrl })
   );
   router.get('/me', requireAuth, async (req, res, next) => {
     try {
-      res.json(await authService.findOrCreateGoogleUser(req.firebaseUser));
+      res.json(await authService.findOrCreateGoogleUser(req.authUser));
     } catch (error) {
       next(error);
     }

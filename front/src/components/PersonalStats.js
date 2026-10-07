@@ -1,22 +1,16 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '@/infrastructure/firebase/firebase.client';
+import { useUser } from '@auth0/nextjs-auth0/client';
 import { apiClient } from '@/infrastructure/http/api.client';
 import Link from 'next/link';
 import { ArrowUpRight, BookOpen } from 'lucide-react';
 export default function PersonalStats() {
+  const { user } = useUser();
   const [purchases, setPurchases] = useState(null);
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (!user) return;
-      apiClient
-        .get('/api/purchases/mine')
-        .then(setPurchases)
-        .catch(() => setPurchases([]));
-    });
-    return unsubscribe;
-  }, []);
+    if (!user) return;
+    apiClient.get('/api/purchases/mine').then(setPurchases).catch(() => setPurchases([]));
+  }, [user]);
   return (
     <Link
       href="/library/acquired"

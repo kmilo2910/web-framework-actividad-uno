@@ -3,23 +3,20 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import LibraryShell from '@/components/LibraryShell';
 import { apiClient } from '@/infrastructure/http/api.client';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '@/infrastructure/firebase/firebase.client';
+import { useUser } from '@auth0/nextjs-auth0/client';
 import CancelReservationButton from '@/components/CancelReservationButton';
 import { CalendarDays, Clock3, Timer } from 'lucide-react';
 import { useI18n } from '@/i18n/provider';
 export default function ReservationsPage() {
   const [items, setItems] = useState([]);
+  const { user } = useUser();
   const { dictionary, language } = useI18n();
   const t = dictionary.reservations;
   const locale =
     { es: 'es-CO', en: 'en-US', fr: 'fr-FR', it: 'it-IT', de: 'de-DE' }[language] || 'es-CO';
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) apiClient.get('/api/reservations/mine').then(setItems);
-    });
-    return unsubscribe;
-  }, []);
+    if (user) apiClient.get('/api/reservations/mine').then(setItems);
+  }, [user]);
   return (
     <LibraryShell>
       <div className="mx-auto max-w-7xl px-6 py-12 md:px-10 md:py-20">

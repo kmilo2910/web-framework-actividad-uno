@@ -2,29 +2,23 @@
 
 import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '@/infrastructure/firebase/firebase.client';
+import { useUser } from '@auth0/nextjs-auth0/client';
 
 export default function ProtectedRoute({ children }) {
   const router = useRouter();
   const pathname = usePathname();
   const [checking, setChecking] = useState(true);
-  const [user, setUser] = useState(null);
+  const { user, error, isLoading } = useUser();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (authenticatedUser) => {
-      setUser(authenticatedUser);
-      setChecking(false);
-
-      if (!authenticatedUser) {
-        const returnTo =
-          pathname && pathname !== '/login' ? `?returnTo=${encodeURIComponent(pathname)}` : '';
-        router.replace(`/login${returnTo}`);
-      }
-    });
-
-    return unsubscribe;
-  }, [pathname, router]);
+    if (isLoading) return;
+    setChecking(false);
+    if (!user && !error) {
+      const returnTo =
+        pathname && pathname !== '/login' ? `?returnTo=${encodeURIComponent(pathname)}` : '';
+      router.replace(`/login${returnTo}`);
+    }
+  }, [isLoading, pathname, router, user, error]);
 
   if (checking || !user) {
     return (

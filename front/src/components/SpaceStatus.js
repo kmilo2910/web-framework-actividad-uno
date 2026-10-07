@@ -1,11 +1,10 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '@/infrastructure/firebase/firebase.client';
+import { useUser } from '@auth0/nextjs-auth0/client';
 import { useI18n } from '@/i18n/provider';
 export default function SpaceStatus({ space }) {
-  const [email, setEmail] = useState(null);
-  useEffect(() => onAuthStateChanged(auth, (user) => setEmail(user?.email || null)), []);
+  const { user } = useUser();
+  const email = user?.email;
   const own = email && space.occupiedByEmail && email === space.occupiedByEmail;
   const { dictionary } = useI18n();
   const t = dictionary.coworking;

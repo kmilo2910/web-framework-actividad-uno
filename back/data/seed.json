@@ -9,7 +9,8 @@
       "year": 2008,
       "price": 34900,
       "soldLastWeeks": 128,
-      "stock": 12
+      "stock": 12,
+      "coverUrl": "https://images-na.ssl-images-amazon.com/images/P/0132350882.01.LZZZZZZZ.jpg"
     },
     {
       "id": "book-2",
@@ -20,7 +21,8 @@
       "year": 2018,
       "price": 29900,
       "soldLastWeeks": 112,
-      "stock": 8
+      "stock": 8,
+      "coverUrl": "https://images-na.ssl-images-amazon.com/images/P/1593279507.01.LZZZZZZZ.jpg"
     },
     {
       "id": "book-3",
@@ -31,7 +33,8 @@
       "year": 2019,
       "price": 39900,
       "soldLastWeeks": 104,
-      "stock": 7
+      "stock": 7,
+      "coverUrl": "https://images-na.ssl-images-amazon.com/images/P/0135957052.01.LZZZZZZZ.jpg"
     },
     {
       "id": "book-4",
@@ -42,7 +45,8 @@
       "year": 1605,
       "price": 18500,
       "soldLastWeeks": 96,
-      "stock": 20
+      "stock": 20,
+      "coverUrl": "https://images-na.ssl-images-amazon.com/images/P/1857150031.01.LZZZZZZZ.jpg"
     },
     {
       "id": "book-5",
@@ -51,6 +55,7 @@
       "type": "book",
       "category": "tecnologia",
       "year": 2017,
+      "coverUrl": "https://images-na.ssl-images-amazon.com/images/P/1449373321.01.LZZZZZZZ.jpg",
       "price": 42500,
       "soldLastWeeks": 89,
       "stock": 5
@@ -62,6 +67,7 @@
       "type": "magazine",
       "category": "historia",
       "year": 2025,
+      "coverUrl": "https://content-historia.nationalgeographic.com.es/medio/2024/12/10/covadonga_3694c1ab_241210151443_1280x1696.webp",
       "price": 9900,
       "soldLastWeeks": 75,
       "stock": 30

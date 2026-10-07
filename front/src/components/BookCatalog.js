@@ -2,8 +2,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { ChevronDown, Search, SlidersHorizontal } from 'lucide-react';
 import BookCard from '@/components/BookCard';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '@/infrastructure/firebase/firebase.client';
+import { useUser } from '@auth0/nextjs-auth0/client';
 import { apiClient } from '@/infrastructure/http/api.client';
 import { useI18n } from '@/i18n/provider';
 export default function BookCatalog({ books }) {
@@ -12,19 +11,17 @@ export default function BookCatalog({ books }) {
   const [category, setCategory] = useState('');
   const [year, setYear] = useState('');
   const [acquiredBookIds, setAcquiredBookIds] = useState([]);
+  const { user } = useUser();
   const { dictionary } = useI18n();
   const t = dictionary.library;
   const hasFilters = query || type || category || year;
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (!user) return;
-      apiClient
-        .get('/api/purchases/mine')
-        .then((purchases) => setAcquiredBookIds(purchases.map((purchase) => purchase.bookId)))
-        .catch(() => setAcquiredBookIds([]));
-    });
-    return unsubscribe;
-  }, []);
+    if (!user) return;
+    apiClient
+      .get('/api/purchases/mine')
+      .then((purchases) => setAcquiredBookIds(purchases.map((purchase) => purchase.bookId)))
+      .catch(() => setAcquiredBookIds([]));
+  }, [user]);
   const categories = [...new Set(books.map((book) => book.category))];
   const years = [...new Set(books.map((book) => book.year))].sort((a, b) => b - a);
   const visible = useMemo(

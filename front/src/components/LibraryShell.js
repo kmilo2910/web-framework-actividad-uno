@@ -4,8 +4,7 @@ import Link from 'next/link';
 import { BookOpen, LogOut, UserRound } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth, firebaseAuthAdapter } from '@/infrastructure/firebase/firebase.client';
+import { useUser } from '@auth0/nextjs-auth0/client';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import LanguageSelector from '@/i18n/LanguageSelector';
 import { useI18n } from '@/i18n/provider';
@@ -13,12 +12,13 @@ import { useI18n } from '@/i18n/provider';
 export default function LibraryShell({ children, user }) {
   const router = useRouter();
   const pathname = usePathname();
+  const { user: auth0User } = useUser();
   const [activeUser, setActiveUser] = useState(user || null);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
   const { dictionary } = useI18n();
   const logoutText = dictionary.logout;
-  useEffect(() => onAuthStateChanged(auth, setActiveUser), [user]);
+  useEffect(() => setActiveUser(auth0User || user || null), [auth0User, user]);
   const homePath = activeUser ? '/dashboard' : '/';
   const isAcquiredActive = pathname === '/library/acquired';
   const isLibraryActive =
@@ -31,7 +31,7 @@ export default function LibraryShell({ children, user }) {
   async function confirmLogout() {
     setLoggingOut(true);
     try {
-      await firebaseAuthAdapter.logout();
+      window.location.assign('/auth/logout');
       setActiveUser(null);
       setShowLogoutModal(false);
       router.replace('/login');

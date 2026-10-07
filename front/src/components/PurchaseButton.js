@@ -1,30 +1,27 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { useUser } from '@auth0/nextjs-auth0/client';
 import { ShoppingBag } from 'lucide-react';
 import { apiClient } from '@/infrastructure/http/api.client';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '@/infrastructure/firebase/firebase.client';
 import { useI18n } from '@/i18n/provider';
 export default function PurchaseButton({ bookId }) {
   const [state, setState] = useState('idle');
   const [message, setMessage] = useState('');
+  const { user } = useUser();
   const { dictionary } = useI18n();
   const t = dictionary.library;
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (!user) return;
-      apiClient
-        .get('/api/purchases/mine')
-        .then((items) => {
-          if (items.some((item) => item.bookId === bookId)) {
-            setState('done');
-            setMessage(t.alreadyAcquired);
-          }
-        })
-        .catch(() => {});
-    });
-    return unsubscribe;
-  }, [bookId]);
+    if (!user) return;
+    apiClient
+      .get('/api/purchases/mine')
+      .then((items) => {
+        if (items.some((item) => item.bookId === bookId)) {
+          setState('done');
+          setMessage(t.alreadyAcquired);
+        }
+      })
+      .catch(() => {});
+  }, [bookId, t.alreadyAcquired, user]);
   async function buy() {
     setState('loading');
     setMessage('');

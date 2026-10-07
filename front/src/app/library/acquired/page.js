@@ -3,44 +3,39 @@ import { useEffect, useState } from 'react';
 import LibraryShell from '@/components/LibraryShell';
 import { apiClient } from '@/infrastructure/http/api.client';
 import { formatCurrency } from '@/core/formatters/currency';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '@/infrastructure/firebase/firebase.client';
+import { useUser } from '@auth0/nextjs-auth0/client';
 import Link from 'next/link';
 import DownloadReceipt from '@/components/DownloadReceipt';
 import BookCover from '@/components/BookCover';
 import { useI18n } from '@/i18n/provider';
+import { ArrowUpRight, BookOpen } from 'lucide-react';
 export default function AcquiredPage() {
   const [items, setItems] = useState([]);
   const [error, setError] = useState('');
+  const { user } = useUser();
   const { dictionary } = useI18n();
   const t = dictionary.acquisitions;
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        setError(t.loginRequired);
-        return;
-      }
-      apiClient
-        .get('/api/purchases/mine')
-        .then(async (purchases) => {
-          const items = await Promise.all(
-            purchases.map(async (purchase) => {
-              try {
-                const book = await fetch(
-                  `${process.env.NEXT_PUBLIC_API_URL}/api/books/${purchase.bookId}`
-                ).then((response) => response.json());
-                return { ...purchase, book };
-              } catch {
-                return purchase;
-              }
-            })
-          );
-          setItems(items);
-        })
-        .catch((err) => setError(err.message));
-    });
-    return unsubscribe;
-  }, []);
+    if (!user) return;
+    apiClient
+      .get('/api/purchases/mine')
+      .then(async (purchases) => {
+        const items = await Promise.all(
+          purchases.map(async (purchase) => {
+            try {
+              const book = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL}/api/books/${purchase.bookId}`
+              ).then((response) => response.json());
+              return { ...purchase, book };
+            } catch {
+              return purchase;
+            }
+          })
+        );
+        setItems(items);
+      })
+      .catch((err) => setError(err.message));
+  }, [user, t.loginRequired]);
   return (
     <LibraryShell>
       <div className="mx-auto max-w-7xl px-6 py-12 md:px-10 md:py-20">
@@ -97,7 +92,28 @@ export default function AcquiredPage() {
                 </table>
               </div>
             ) : (
-              <p className="text-[#64707d]">{t.empty}</p>
+              <div className="relative overflow-hidden px-6 py-16 text-center md:px-12">
+                <div className="absolute -right-12 -top-16 h-40 w-40 rounded-full bg-[#e7eef0]/70" />
+                <div className="absolute -bottom-24 -left-10 h-44 w-44 rounded-full bg-[#f4f1eb]" />
+                <div className="relative mx-auto max-w-md">
+                  <span className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-[#e7eef0] text-[#1f4f66] shadow-sm">
+                    <BookOpen size={25} />
+                  </span>
+                  <p className="mt-6 text-2xl font-semibold tracking-tight text-[#17202a]">
+                    {t.emptyTitle}
+                  </p>
+                  <p className="mt-3 text-sm leading-relaxed text-[#64707d]">
+                    {t.emptyDescription}
+                  </p>
+                  <Link
+                    href="/library"
+                    className="!text-white mt-7 inline-flex items-center gap-2 rounded-full bg-[#1f4f66] px-5 py-3 text-sm font-semibold transition hover:-translate-y-0.5 hover:!text-white hover:bg-[#173b4d]"
+                  >
+                    {t.explore}
+                    <ArrowUpRight size={16} />
+                  </Link>
+                </div>
+              </div>
             )}
           </div>
         )}

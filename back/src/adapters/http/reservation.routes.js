@@ -3,7 +3,7 @@ export function reservationRoutes(service, authMiddleware) {
   const router = Router();
   router.get('/mine', authMiddleware, async (req, res, next) => {
     try {
-      res.json(await service.listForUser(req.firebaseUser.email));
+      res.json(await service.listForUser(req.authUser.email));
     } catch (error) {
       next(error);
     }
@@ -12,7 +12,7 @@ export function reservationRoutes(service, authMiddleware) {
     try {
       res.status(201).json(
         await service.reserve({
-          userEmail: req.firebaseUser.email,
+          userEmail: req.authUser.email,
           spaceId: req.body.spaceId,
           durationMinutes: req.body.durationMinutes,
           reservationDate: req.body.reservationDate,
@@ -26,7 +26,7 @@ export function reservationRoutes(service, authMiddleware) {
   router.patch('/:id/cancel', authMiddleware, async (req, res, next) => {
     try {
       res.json(
-        await service.cancel({ userEmail: req.firebaseUser.email, reservationId: req.params.id })
+        await service.cancel({ userEmail: req.authUser.email, reservationId: req.params.id })
       );
     } catch (error) {
       next(error);
