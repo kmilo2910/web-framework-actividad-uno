@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { BookOpen, LogOut, UserRound } from 'lucide-react';
+import { BookOpen, LogOut, Menu, UserRound, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useUser } from '@auth0/nextjs-auth0/client';
@@ -15,10 +15,12 @@ export default function LibraryShell({ children, user }) {
   const { user: auth0User } = useUser();
   const [activeUser, setActiveUser] = useState(user || null);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
   const { dictionary } = useI18n();
   const logoutText = dictionary.logout;
   useEffect(() => setActiveUser(auth0User || user || null), [auth0User, user]);
+  useEffect(() => setMobileMenuOpen(false), [pathname]);
   const homePath = activeUser ? '/dashboard' : '/';
   const isAcquiredActive = pathname === '/library/acquired';
   const isLibraryActive =
@@ -43,7 +45,7 @@ export default function LibraryShell({ children, user }) {
   return (
     <ProtectedRoute>
       <div className="min-h-screen bg-[#f4f1eb] text-[#17202a]">
-        <header className="sticky top-0 z-40 border-b border-[#d8d5ce]/80 bg-[#f4f1eb]/90 px-6 py-3 backdrop-blur-xl md:px-10">
+        <header className="safe-area-top sticky top-0 z-40 border-b border-[#d8d5ce]/80 bg-[#f4f1eb]/90 px-6 pb-3 backdrop-blur-xl md:px-10">
           <div className="mx-auto flex max-w-7xl items-center justify-between gap-6">
             <Link href={homePath} className="flex items-center gap-3 font-semibold tracking-tight">
               <span
@@ -108,8 +110,60 @@ export default function LibraryShell({ children, user }) {
               >
                 <LogOut size={17} />
               </button>
+              <button
+                type="button"
+                onClick={() => setMobileMenuOpen((open) => !open)}
+                aria-label={mobileMenuOpen ? 'Cerrar menú' : 'Abrir menú'}
+                aria-expanded={mobileMenuOpen}
+                className="grid h-9 w-9 place-items-center rounded-full border border-[#d8d5ce] bg-white/70 md:hidden"
+              >
+                {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
+              </button>
             </nav>
           </div>
+          {mobileMenuOpen && (
+            <div className="safe-area-bottom mx-auto mt-3 max-w-7xl border-t border-[#d8d5ce]/70 pt-3 md:hidden">
+              <nav className="grid gap-1 rounded-2xl border border-[#d8d5ce] bg-white/85 p-2 shadow-lg backdrop-blur-xl">
+                <Link
+                  href={homePath}
+                  className="rounded-xl px-4 py-3 text-sm font-semibold hover:bg-[#f4f1eb]"
+                >
+                  {dictionary.common.home || 'Inicio'}
+                </Link>
+                <Link
+                  href="/library"
+                  className="rounded-xl px-4 py-3 text-sm font-semibold hover:bg-[#f4f1eb]"
+                >
+                  {dictionary.dashboard.library}
+                </Link>
+                {activeUser && (
+                  <Link
+                    href="/library/acquired"
+                    className="rounded-xl px-4 py-3 text-sm font-semibold hover:bg-[#f4f1eb]"
+                  >
+                    {dictionary.dashboard.acquisitions}
+                  </Link>
+                )}
+                <Link
+                  href="/coworking"
+                  className="rounded-xl px-4 py-3 text-sm font-semibold hover:bg-[#e8f3eb]"
+                >
+                  {dictionary.dashboard.coworking}
+                </Link>
+                {activeUser && (
+                  <Link
+                    href="/coworking/reservations"
+                    className="rounded-xl px-4 py-3 text-sm font-semibold hover:bg-[#e8f3eb]"
+                  >
+                    {dictionary.dashboard.reservations}
+                  </Link>
+                )}
+                <div className="border-t border-[#d8d5ce] px-4 py-3">
+                  <LanguageSelector />
+                </div>
+              </nav>
+            </div>
+          )}
         </header>
         <main>{children}</main>
         {showLogoutModal && (
