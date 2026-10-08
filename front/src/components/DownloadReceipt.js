@@ -33,16 +33,16 @@ export default function DownloadReceipt({ purchase, book }) {
     pdf.save(`nexus-${purchase.bookId}-comprobante.pdf`);
   }
   return (
-    <div className="flex flex-col items-start gap-2">
+    <div className="flex min-w-0 max-w-full flex-col items-start gap-2">
       <button
         onClick={productPdf}
-        className="inline-flex items-center gap-2 text-sm font-semibold text-[#1f4f66] hover:underline"
+        className="inline-flex min-w-0 max-w-full items-center gap-2 text-left text-sm font-semibold whitespace-normal break-words text-[#1f4f66] hover:underline"
       >
         <FileText size={16} /> {t.downloadBook}
       </button>
       <button
         onClick={receiptPdf}
-        className="inline-flex items-center gap-2 text-sm font-semibold text-[#64707d] hover:underline"
+        className="inline-flex min-w-0 max-w-full items-center gap-2 text-left text-sm font-semibold whitespace-normal break-words text-[#64707d] hover:underline"
       >
         <Download size={16} /> {t.downloadReceipt}
       </button>
