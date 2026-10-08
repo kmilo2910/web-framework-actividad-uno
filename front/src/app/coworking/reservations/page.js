@@ -5,7 +5,7 @@ import LibraryShell from '@/components/LibraryShell';
 import { apiClient } from '@/infrastructure/http/api.client';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import CancelReservationButton from '@/components/CancelReservationButton';
-import { CalendarDays, Clock3, Timer } from 'lucide-react';
+import { ArrowLeft, CalendarDays, Clock3, Timer } from 'lucide-react';
 import { useI18n } from '@/i18n/provider';
 export default function ReservationsPage() {
   const [items, setItems] = useState([]);
@@ -20,8 +20,11 @@ export default function ReservationsPage() {
   return (
     <LibraryShell>
       <div className="mx-auto max-w-7xl px-6 py-12 md:px-10 md:py-20">
-        <Link href="/coworking" className="text-sm font-semibold text-[#1f4f66]">
-          ← {dictionary.common.back} {dictionary.dashboard.coworking}
+        <Link
+          href="/coworking"
+          className="inline-flex items-center gap-2 text-sm font-semibold text-[#2f6f4e]"
+        >
+          <ArrowLeft size={16} /> {dictionary.common.back} {dictionary.dashboard.coworking}
         </Link>
         <h1 className="mt-8 text-5xl font-semibold tracking-[-.06em]">{t.title}</h1>
         <div className="mt-10 grid gap-4">
