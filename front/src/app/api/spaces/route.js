@@ -1,13 +1,13 @@
-import { NextResponse } from 'next/server';
 import { listSpaces } from '@/server/spaces';
+import { apiError, apiSuccess } from '@/server/api-response';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(request) {
   try {
     const language = request.nextUrl.searchParams.get('lang') || 'es';
-    return NextResponse.json(await listSpaces(language));
-  } catch {
-    return NextResponse.json({ error: 'No se pudieron cargar los espacios' }, { status: 500 });
+    return apiSuccess(await listSpaces(language), 'Espacios cargados correctamente');
+  } catch (error) {
+    return apiError(error.message || 'No se pudieron cargar los espacios');
   }
 }

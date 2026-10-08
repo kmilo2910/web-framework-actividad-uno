@@ -14,8 +14,9 @@ export const apiClient = {
     const response = await fetch(`${apiBaseUrl}${path}`, {
       headers: authHeaders,
     });
-    if (!response.ok) throw new Error((await response.json()).error || 'Error en la API');
-    return response.json();
+    const payload = await response.json();
+    if (!response.ok) throw new Error(payload.message || 'Error en la API');
+    return payload.data;
   },
   async post(path, body) {
     const authHeaders = await getAuthHeaders();
@@ -27,8 +28,9 @@ export const apiClient = {
       },
       body: JSON.stringify(body),
     });
-    if (!response.ok) throw new Error((await response.json()).error || 'Error en la API');
-    return response.json();
+    const payload = await response.json();
+    if (!response.ok) throw new Error(payload.message || 'Error en la API');
+    return payload.data;
   },
   async patch(path, body = {}) {
     const authHeaders = await getAuthHeaders();
@@ -40,7 +42,8 @@ export const apiClient = {
       },
       body: JSON.stringify(body),
     });
-    if (!response.ok) throw new Error((await response.json()).error || 'Error en la API');
-    return response.json();
+    const payload = await response.json();
+    if (!response.ok) throw new Error(payload.message || 'Error en la API');
+    return payload.data;
   },
 };

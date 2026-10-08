@@ -1,12 +1,12 @@
-import { NextResponse } from 'next/server';
 import { listBestsellers } from '@/server/books';
+import { apiError, apiSuccess } from '@/server/api-response';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    return NextResponse.json(await listBestsellers(10));
-  } catch {
-    return NextResponse.json({ error: 'No se pudieron cargar los más vendidos' }, { status: 500 });
+    return apiSuccess(await listBestsellers(10), 'Más vendidos cargados correctamente');
+  } catch (error) {
+    return apiError(error.message || 'No se pudieron cargar los más vendidos');
   }
 }

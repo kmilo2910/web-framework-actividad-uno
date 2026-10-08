@@ -1,16 +1,19 @@
-import { NextResponse } from 'next/server';
 import { auth0 } from '@/lib/auth0';
 import { cancelReservation } from '@/server/reservations';
+import { apiError, apiSuccess } from '@/server/api-response';
 
 export const dynamic = 'force-dynamic';
 
 export async function PATCH(_request, { params }) {
   const session = await auth0.getSession();
   const email = session?.user?.email;
-  if (!email) return NextResponse.json({ error: 'Autenticación requerida' }, { status: 401 });
+  if (!email) return apiError('Autenticación requerida', 401, 'AUTH_REQUIRED');
   try {
-    return NextResponse.json(await cancelReservation(email, (await params).id));
+    return apiSuccess(
+      await cancelReservation(email, (await params).id),
+      'Reserva cancelada correctamente'
+    );
   } catch (error) {
-    return NextResponse.json({ error: error.message }, { status: 400 });
+    return apiError(error.message, 400, 'CANCELLATION_ERROR');
   }
 }

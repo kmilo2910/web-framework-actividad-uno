@@ -1,6 +1,6 @@
-import { NextResponse } from 'next/server';
 import { auth0 } from '@/lib/auth0';
 import { createReservation, listReservations } from '@/server/reservations';
+import { apiError, apiSuccess } from '@/server/api-response';
 
 export const dynamic = 'force-dynamic';
 
@@ -11,16 +11,21 @@ async function emailFromSession() {
 
 export async function GET() {
   const user = await emailFromSession();
-  if (!user?.email) return NextResponse.json({ error: 'Autenticación requerida' }, { status: 401 });
-  return NextResponse.json(await listReservations(user.email));
+  if (!user?.email) return apiError('Autenticación requerida', 401, 'AUTH_REQUIRED');
+  return apiSuccess(await listReservations(user.email), 'Reservas cargadas correctamente');
 }
 
 export async function POST(request) {
   const user = await emailFromSession();
-  if (!user?.email) return NextResponse.json({ error: 'Autenticación requerida' }, { status: 401 });
+  if (!user?.email) return apiError('Autenticación requerida', 401, 'AUTH_REQUIRED');
   try {
-    return NextResponse.json(await createReservation(user, await request.json()), { status: 201 });
+    return apiSuccess(
+      await createReservation(user, await request.json()),
+      'Reserva creada correctamente',
+      201,
+      'CREATED'
+    );
   } catch (error) {
-    return NextResponse.json({ error: error.message }, { status: 400 });
+    return apiError(error.message, 400, 'RESERVATION_ERROR');
   }
 }

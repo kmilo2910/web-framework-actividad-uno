@@ -1,22 +1,26 @@
-import { NextResponse } from 'next/server';
 import { auth0 } from '@/lib/auth0';
 import { createPurchase, listPurchases } from '@/server/purchases';
+import { apiError, apiSuccess } from '@/server/api-response';
 export const dynamic = 'force-dynamic';
 export async function GET() {
   const session = await auth0.getSession();
-  if (!session?.user?.email)
-    return NextResponse.json({ error: 'Autenticación requerida' }, { status: 401 });
-  return NextResponse.json(await listPurchases(session.user.email));
+  if (!session?.user?.email) return apiError('Autenticación requerida', 401, 'AUTH_REQUIRED');
+  return apiSuccess(
+    await listPurchases(session.user.email),
+    'Adquisiciones cargadas correctamente'
+  );
 }
 export async function POST(request) {
   const session = await auth0.getSession();
-  if (!session?.user?.email)
-    return NextResponse.json({ error: 'Autenticación requerida' }, { status: 401 });
+  if (!session?.user?.email) return apiError('Autenticación requerida', 401, 'AUTH_REQUIRED');
   try {
-    return NextResponse.json(await createPurchase(session.user, (await request.json()).bookId), {
-      status: 201,
-    });
+    return apiSuccess(
+      await createPurchase(session.user, (await request.json()).bookId),
+      'Adquisición registrada correctamente',
+      201,
+      'CREATED'
+    );
   } catch (error) {
-    return NextResponse.json({ error: error.message }, { status: 400 });
+    return apiError(error.message, 400, 'PURCHASE_ERROR');
   }
 }

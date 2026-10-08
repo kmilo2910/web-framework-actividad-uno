@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server';
 import { getSpace } from '@/server/spaces';
+import { apiError, apiSuccess } from '@/server/api-response';
 
 export const dynamic = 'force-dynamic';
 
@@ -8,9 +8,9 @@ export async function GET(request, { params }) {
     const language = request.nextUrl.searchParams.get('lang') || 'es';
     const space = await getSpace((await params).id, language);
     return space
-      ? NextResponse.json(space)
-      : NextResponse.json({ error: 'Espacio no encontrado' }, { status: 404 });
-  } catch {
-    return NextResponse.json({ error: 'No se pudo cargar el espacio' }, { status: 500 });
+      ? apiSuccess(space, 'Espacio cargado correctamente')
+      : apiError('Espacio no encontrado', 404, 'NOT_FOUND');
+  } catch (error) {
+    return apiError(error.message || 'No se pudo cargar el espacio');
   }
 }

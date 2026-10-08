@@ -83,9 +83,9 @@ export default function LibraryShell({ children, user }) {
               )}
               {activeUser && (
                 <span className="hidden items-center gap-2 rounded-full border border-[#d8d5ce] bg-white/70 px-3 py-2 md:flex">
-                  {activeUser.photoURL || activeUser.avatar ? (
+                  {activeUser.photoURL || activeUser.avatar || activeUser.picture ? (
                     <img
-                      src={activeUser.photoURL || activeUser.avatar}
+                      src={activeUser.photoURL || activeUser.avatar || activeUser.picture}
                       alt={`Foto de ${activeUser.displayName || activeUser.name || 'usuario'}`}
                       className="h-6 w-6 rounded-full object-cover"
                     />

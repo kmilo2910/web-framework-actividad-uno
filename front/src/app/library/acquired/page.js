@@ -24,9 +24,9 @@ export default function AcquiredPage() {
         const items = await Promise.all(
           purchases.map(async (purchase) => {
             try {
-              const book = await fetch(`/api/books/${purchase.bookId}`).then((response) =>
-                response.json()
-              );
+              const book = await fetch(`/api/books/${purchase.bookId}`)
+                .then((response) => response.json())
+                .then((payload) => payload.data);
               return { ...purchase, book };
             } catch {
               return purchase;
