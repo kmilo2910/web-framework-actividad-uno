@@ -8,6 +8,25 @@ export default function DownloadReceipt({ purchase, book }) {
   const title = book?.title || purchase.bookId;
   const { dictionary } = useI18n();
   const t = dictionary.acquisitions;
+  function deliverPdf(pdf, fileName) {
+    const dataUri = pdf.output('datauristring');
+    const data = dataUri.split(',')[1];
+    const nativeWebView = typeof window !== 'undefined' && window.ReactNativeWebView;
+
+    if (nativeWebView) {
+      nativeWebView.postMessage(
+        JSON.stringify({
+          type: 'DOWNLOAD_PDF',
+          fileName,
+          data,
+          mimeType: 'application/pdf',
+        })
+      );
+      return;
+    }
+
+    pdf.save(fileName);
+  }
   function productPdf() {
     const pdf = new jsPDF();
     pdf.setFontSize(24);
@@ -19,7 +38,7 @@ export default function DownloadReceipt({ purchase, book }) {
     pdf.text('Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 20, 105);
     pdf.text('Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.', 20, 118);
     pdf.text('Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.', 20, 131);
-    pdf.save(`nexus-${purchase.bookId}.pdf`);
+    deliverPdf(pdf, `nexus-${purchase.bookId}.pdf`);
   }
   function receiptPdf() {
     const pdf = new jsPDF();
@@ -30,7 +49,7 @@ export default function DownloadReceipt({ purchase, book }) {
     pdf.text(`Precio: ${formatCurrency(purchase.price)}`, 20, 72);
     pdf.text(`Fecha: ${new Date(purchase.purchasedAt).toLocaleString('es-CO')}`, 20, 84);
     pdf.text(`Referencia: ${purchase.id}`, 20, 96);
-    pdf.save(`nexus-${purchase.bookId}-comprobante.pdf`);
+    deliverPdf(pdf, `nexus-${purchase.bookId}-comprobante.pdf`);
   }
   return (
     <div className="flex min-w-0 max-w-full flex-col items-start gap-2">
