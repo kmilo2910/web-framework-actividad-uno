@@ -4,9 +4,33 @@ import { randomUUID } from 'node:crypto';
 async function userByEmail(email) {
   const r = await getPostgresPool().query(
     `SELECT data FROM nexus_records WHERE collection='users' AND data->>'email'=$1 LIMIT 1`,
-    [email]
+    [email?.trim().toLowerCase()]
   );
   return r.rows[0]?.data;
+}
+
+async function findOrCreateUser(profile) {
+  const email = profile.email?.trim().toLowerCase();
+  if (!email) return null;
+
+  const existing = await userByEmail(email);
+  if (existing) return existing;
+
+  const user = {
+    id: `user-${randomUUID()}`,
+    googleId: profile.sub || profile.user_id || email,
+    name: profile.name || profile.nickname || email,
+    email,
+    avatar: profile.picture || null,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+
+  await getPostgresPool().query(
+    `INSERT INTO nexus_records (collection,id,data,created_at,updated_at) VALUES ('users',$1,$2,$3,NOW())`,
+    [user.id, user, user.createdAt]
+  );
+  return user;
 }
 export async function listPurchases(email) {
   const user = await userByEmail(email);
@@ -19,7 +43,7 @@ export async function listPurchases(email) {
 }
 export async function createPurchase(profile, bookId) {
   const pool = getPostgresPool();
-  const user = await userByEmail(profile.email);
+  const user = await findOrCreateUser(profile);
   if (!user) throw new Error('Usuario no encontrado');
   const bookResult = await pool.query(
     `SELECT data FROM nexus_records WHERE collection='books' AND id=$1`,
