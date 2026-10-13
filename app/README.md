@@ -91,7 +91,13 @@ Las rutas `/api/*` son Route Handlers de Next.js y devuelven respuestas con `cod
 
 ## Base de datos
 
-La aplicación usa la tabla `nexus_records`. Para trabajar con una base vacía, solicita el script o una copia de desarrollo al responsable del proyecto. No ejecutes migraciones sobre producción sin autorización.
+La aplicación usa la tabla `nexus_records`. Para crear la tabla y cargar libros y espacios de prueba:
+
+```bash
+npm run seed
+```
+
+El seed elimina y vuelve a crear únicamente las colecciones `books` y `spaces`. No crea usuarios, compras ni reservas. No lo ejecutes sobre producción porque reemplaza esas dos colecciones.
 
 ## Seguridad
 
